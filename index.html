@@ -1259,22 +1259,42 @@ function parseEml(text){
 
   if(!threadSegs||threadSegs.length===0) threadSegs=[plainText||''];
 
-  // ── Merge header-only segments with the following body segment ──
-  // Outlook splits "De:/Enviado:" header and body into separate segments
-  // A "header segment" is short and starts with De:/From:/Enviado:
-  const merged=[];
+  // ── Clean up thread segments ─────────────────────────────────
+  // Keep only:
+  // 1. The first segment (latest message — always keep regardless)
+  // 2. Segments that look like email replies (start with De:/From:/Enviado:/Sent:)
+  //    OR are signature blocks attached to a previous email
+  // Filter out document sections (numbered clauses, "Texto original:", etc.)
+
+  function isEmailSegment(seg, index){
+    if(index===0) return true; // always keep first
+    const s=seg.trim();
+    // Starts with email header fields
+    if(/^(De:|From:|Para:|To:|Enviado:|Sent:|Date:|Fecha:)/i.test(s)) return true;
+    // Signature block after an email (has contact info pattern)
+    if(/\+\d{2}\s?\d/.test(s) && index>0) return true;
+    return false;
+  }
+
+  // Also merge consecutive email segments where header got split from body
+  const cleaned=[];
   for(let i=0;i<threadSegs.length;i++){
     const seg=threadSegs[i];
-    const isHeader=/^\s*(De:|From:|Para:|To:)/.test(seg) && seg.length<400;
-    if(isHeader && i+1<threadSegs.length){
-      // merge header + next segment
-      merged.push(seg+'\n\n'+threadSegs[i+1]);
-      i++; // skip next
-    }else{
-      merged.push(seg);
+    if(!isEmailSegment(seg,i)) continue;
+    // If this is a very short header-only segment (<300 chars), merge with next valid segment
+    const isHeaderOnly=/^(De:|From:)/i.test(seg.trim()) && seg.length<300;
+    if(isHeaderOnly){
+      // find next segment
+      let next='';
+      for(let j=i+1;j<threadSegs.length;j++){
+        if(threadSegs[j].trim().length>20){ next=threadSegs[j]; i=j; break; }
+      }
+      cleaned.push(next ? seg+'\n\n'+next : seg);
+    } else {
+      cleaned.push(seg);
     }
   }
-  threadSegs=merged;
+  threadSegs = cleaned.length>0 ? cleaned : threadSegs;
 
   const body=threadSegs[0].slice(0,1200);
   // Store full thread up to 15000 chars
