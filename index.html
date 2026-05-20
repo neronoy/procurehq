@@ -1259,9 +1259,26 @@ function parseEml(text){
 
   if(!threadSegs||threadSegs.length===0) threadSegs=[plainText||''];
 
+  // ── Merge header-only segments with the following body segment ──
+  // Outlook splits "De:/Enviado:" header and body into separate segments
+  // A "header segment" is short and starts with De:/From:/Enviado:
+  const merged=[];
+  for(let i=0;i<threadSegs.length;i++){
+    const seg=threadSegs[i];
+    const isHeader=/^\s*(De:|From:|Para:|To:)/.test(seg) && seg.length<400;
+    if(isHeader && i+1<threadSegs.length){
+      // merge header + next segment
+      merged.push(seg+'\n\n'+threadSegs[i+1]);
+      i++; // skip next
+    }else{
+      merged.push(seg);
+    }
+  }
+  threadSegs=merged;
+
   const body=threadSegs[0].slice(0,1200);
-  // Store full thread up to 8000 chars
-  const fullContent=threadSegs.map((s,i)=>i===0?s:'\n%%REPLY%%\n'+s).join('\n').slice(0,8000);
+  // Store full thread up to 15000 chars
+  const fullContent=threadSegs.map((s,i)=>i===0?s:'\n%%REPLY%%\n'+s).join('\n').slice(0,15000);
 
   return{subject,from,to,date:dateStr,body,thread:threadSegs,fullContent};
 }
