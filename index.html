@@ -1014,17 +1014,144 @@ async function saveResp(){
 
 // ── EML ───────────────────────────────────────────────────────
 function parseEml(text){
-  const lines=text.split(/\r?\n/);const headers={};let i=0;
-  while(i<lines.length){const l=lines[i];if(l.trim()===''){i++;break;}const m=l.match(/^([\w\-]+):\s*(.*)$/);if(m)headers[m[1].toLowerCase()]=m[2].trim();i++;}
-  let body=lines.slice(i).join('\n');
-  body=body.replace(/=\r?\n/g,'').replace(/=[0-9A-Fa-f]{2}/g,m=>String.fromCharCode(parseInt(m.slice(1),16)));
-  if((headers['content-type']||'').includes('text/html'))body=body.replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s{2,}/g,' ');
-  body=body.trim().slice(0,800);
-  let dateStr='';try{const d=new Date(headers['date']||'');if(!isNaN(d))dateStr=d.toISOString().slice(0,10);}catch(e){}
-  let subject=headers['subject']||'';
-  subject=subject.replace(/=\?[^?]+\?[bBqQ]\?([^?]*)\?=/g,(_,e)=>{try{return atob(e);}catch{return e;}});
-  const from=(headers['from']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim();
-  const to=(headers['to']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim();
+  // ── Parse headers ──────────────────────────────────────────
+  function parseHeaders(block){
+    const hdrs={};
+    const lines=block.split(/\r?\n/);
+    let i=0;
+    while(i<lines.length){
+      const l=lines[i];
+      if(l.trim()===''){break;}
+      const m=l.match(/^([\w\-]+):\s*(.*)$/);
+      if(m){
+        let key=m[1].toLowerCase(), val=m[2];
+        // fold continuation lines
+        while(i+1<lines.length&&/^[ \t]/.test(lines[i+1])){i++;val+=' '+lines[i].trim();}
+        hdrs[key]=val.trim();
+      }
+      i++;
+    }
+    return hdrs;
+  }
+
+  // ── Decode RFC2047 encoded words (=?charset?B/Q?...?=) ────
+  function decodeRfc2047(str){
+    return str.replace(/=\?([^?]+)\?([bBqQ])\?([^?]*)\?=/g,(_,charset,enc,data)=>{
+      try{
+        if(enc.toUpperCase()==='B'){
+          const bytes=atob(data.replace(/-/g,'+').replace(/_/g,'/'));
+          if(charset.toLowerCase().startsWith('utf'))return decodeURIComponent(bytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));
+          return bytes;
+        }else{
+          return data.replace(/_/g,' ').replace(/=([0-9A-Fa-f]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
+        }
+      }catch{return data;}
+    });
+  }
+
+  // ── Decode quoted-printable ────────────────────────────────
+  function decodeQP(str){
+    return str.replace(/=\r?\n/g,'').replace(/=([0-9A-Fa-f]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
+  }
+
+  // ── Decode base64 body safely (handles utf-8) ─────────────
+  function decodeBase64Body(str){
+    try{
+      const clean=str.replace(/\s+/g,'');
+      const bytes=atob(clean);
+      // try utf-8 decode
+      try{
+        return decodeURIComponent(bytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));
+      }catch{return bytes;}
+    }catch{return str;}
+  }
+
+  // ── Strip HTML tags ────────────────────────────────────────
+  function stripHtml(str){
+    return str
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'')
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'')
+      .replace(/<br\s*\/?>/gi,'\n')
+      .replace(/<\/p>/gi,'\n')
+      .replace(/<\/div>/gi,'\n')
+      .replace(/<[^>]+>/g,'')
+      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"')
+      .replace(/\r\n|\r/g,'\n')
+      .replace(/\n{3,}/g,'\n\n')
+      .trim();
+  }
+
+  // ── Extract best text part from multipart ─────────────────
+  function extractPart(rawBody, contentType, encoding){
+    const ct=(contentType||'').toLowerCase();
+    const enc=(encoding||'').toLowerCase();
+    let decoded=rawBody;
+    if(enc==='base64') decoded=decodeBase64Body(rawBody);
+    else if(enc==='quoted-printable') decoded=decodeQP(rawBody);
+    if(ct.includes('text/html')) decoded=stripHtml(decoded);
+    return decoded.trim();
+  }
+
+  // ── Parse a MIME part (headers + body) ────────────────────
+  function parsePart(raw){
+    const sep=raw.search(/\r?\n\r?\n/);
+    if(sep===-1)return{headers:{},body:raw};
+    const hdrBlock=raw.slice(0,sep);
+    const body=raw.slice(sep).replace(/^\r?\n/,'');
+    return{headers:parseHeaders(hdrBlock),body};
+  }
+
+  // ── Main parse ────────────────────────────────────────────
+  const nlnl=text.search(/\r?\n\r?\n/);
+  const hdrRaw=nlnl!==-1?text.slice(0,nlnl):text;
+  const bodyRaw=nlnl!==-1?text.slice(nlnl).replace(/^\r?\n/,''):'';
+  const headers=parseHeaders(hdrRaw);
+
+  const ct=headers['content-type']||'';
+  const enc=headers['content-transfer-encoding']||'';
+
+  // Decode subject/from/to
+  let subject=decodeRfc2047(headers['subject']||'');
+  const from=decodeRfc2047((headers['from']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim());
+  const to=decodeRfc2047((headers['to']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim());
+
+  let dateStr='';
+  try{const d=new Date(headers['date']||'');if(!isNaN(d))dateStr=d.toISOString().slice(0,10);}catch(e){}
+
+  let body='';
+
+  if(ct.includes('multipart')){
+    // Extract boundary
+    const bm=ct.match(/boundary="?([^";]+)"?/i);
+    if(bm){
+      const boundary='--'+bm[1].trim();
+      const parts=bodyRaw.split(new RegExp(boundary+'(?:--|\\r?\\n)'));
+      // Prefer text/plain, fallback to text/html
+      let plainBody='', htmlBody='';
+      for(const part of parts){
+        if(!part.trim()||part.trim()==='--')continue;
+        const p=parsePart(part);
+        const pct=(p.headers['content-type']||'').toLowerCase();
+        const penc=(p.headers['content-transfer-encoding']||'').toLowerCase();
+        if(pct.includes('multipart')){
+          // nested multipart — recurse by re-parsing
+          const nested=parseEml('Content-Type: '+p.headers['content-type']+'\r\n\r\n'+p.body);
+          if(nested.body)plainBody=nested.body;
+        }else if(pct.includes('text/plain')&&!plainBody){
+          plainBody=extractPart(p.body,pct,penc);
+        }else if(pct.includes('text/html')&&!htmlBody){
+          htmlBody=extractPart(p.body,pct,penc);
+        }
+      }
+      body=plainBody||htmlBody||'';
+    }
+  }else{
+    body=extractPart(bodyRaw,ct,enc);
+  }
+
+  // Trim and limit
+  body=body.replace(/\r\n|\r/g,'\n').replace(/\n{4,}/g,'\n\n\n').trim().slice(0,1200);
+
   return{subject,from,to,date:dateStr,body};
 }
 
