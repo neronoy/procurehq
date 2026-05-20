@@ -208,6 +208,8 @@ textarea{resize:vertical;min-height:70px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .sec-hdr{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .empty{padding:24px;font-size:13px;color:var(--text3);text-align:center}
+.tl-item:hover .tl-del-btn{opacity:1 !important}
+.tl-del-btn:hover{border-color:#E24B4A !important;color:#A32D2D !important;background:var(--red-bg) !important}
 </style>
 </head>
 <body>
@@ -538,9 +540,9 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── I18N ────────────────────────────────────────────────────
 const LANGS = {
-  pt:{dashboard:'Dashboard',projects:'Projetos',pending_in:'Pendente em',resp_internal:'Interno / Procurement',resp_am:'Area Manager',resp_client:'Cliente',resp_vendor:'Fornecedor',resp_blocked:'Bloqueado',total_projects:'Total projetos',pending_internal:'Pendente interno',blocked:'Bloqueados',awaits_vendor:'Aguarda fornecedor',recent_projects:'Projetos recentes',col_project:'Projeto',col_am:'Area Manager',col_pending:'Pendente em',col_status:'Estado',col_date:'Data',new_project:'Novo projeto',edit_project:'Editar projeto',back:'Voltar',copy_id:'Copiar ID',edit:'Editar',change_resp:'Alterar',change_resp_title:'Alterar responsável',tab_timeline:'Cronologia',tab_hw:'Alterações HW',tab_info:'Detalhes',add_email:'Email',import_eml:'Importar .eml',add_file:'Ficheiro',add_note:'Nota',add_hw:'Alteração HW',import_email_lbl:'Importar email do pedido (.eml)',eml_drag:'Arrasta o .eml aqui ou clica para selecionar',eml_hint:'Outlook: Ficheiro → Guardar como → .eml',id_auto:'gerado automaticamente',name_lbl:'Nome *',type_lbl:'Tipo',am_lbl:'Area Manager',client_lbl:'Cliente',vendor_lbl:'Fornecedor',deadline_lbl:'Prazo',desc_lbl:'Descrição',resp_lbl:'Pendente em',resp_name_lbl:'Nome específico',status_lbl:'Estado',reason_lbl:'Motivo',type_price:'Pedido de preço',type_lt:'Lead time',type_hw:'Alteração HW',type_mixed:'Preço + Lead time',type_other:'Outro',status_open:'Em aberto',status_pending:'Aguarda informação',status_closed:'Fechado',cancel:'Cancelar',save:'Guardar alterações',confirm:'Confirmar',create_project:'Criar projeto',language:'Idioma',logout:'Sair',auth_login:'Entrar',auth_register:'Criar conta',auth_no_account:'Não tens conta?',auth_has_account:'Já tens conta?',entry_email:'Adicionar email',entry_eml:'Importar .eml',entry_file:'Adicionar ficheiro',entry_note:'Adicionar nota',entry_hw:'Registar alteração HW',from_lbl:'De',to_lbl:'Para',subject_lbl:'Assunto',body_lbl:'Conteúdo',file_name_lbl:'Nome do ficheiro',file_type_lbl:'Tipo',file_notes_lbl:'Notas',ftype_quote:'Cotação',ftype_spec:'Especificação técnica',ftype_email:'Email exportado',ftype_other:'Outro',component_lbl:'Componente / Referência',old_ver:'Versão anterior',new_ver:'Versão nova',price_impact:'Impacto preço',pi_none:'Sem alteração',pi_up:'Aumento',pi_down:'Redução',justification_lbl:'Justificação',since:'desde',created_on:'Criado em',am_label:'Area Manager',client_label:'Cliente',vendor_label:'Fornecedor',type_label:'Tipo',deadline_label:'Prazo',no_entries:'Sem entradas ainda.',no_hw:'Sem alterações HW.',no_projects:'Nenhum projeto encontrado.',loading:'A carregar...',copied:'ID copiado. Cola no assunto dos emails: ',transfer:'Transferência',created_proj:'Projeto criado',sb_menu:'Menu',filter_all:'Todos',filter_open:'Em aberto',filter_pending:'Aguarda info',filter_closed:'Fechados',filter_int:'Pendente interno',filter_am:'Pendente AM',filter_vendor:'Pendente fornecedor',filter_blocked:'Bloqueados',prev_resp:'De',next_resp:'Para',reason:'Motivo',email_date:'Data do email',email_preview:'Ver email completo',click_to_view:'Clica para ver o email',col_client:'Cliente',col_vendor:'Fabricante',close_project:'Encerrar',reopen_project:'Reabrir',delete_project:'Apagar',confirm_close:'Encerrar projeto',confirm_reopen:'Reabrir projeto',confirm_delete:'Apagar projeto',delete_warning:'Esta ação é irreversível. Todos os dados serão eliminados.',status_changed:'Estado alterado',reply:'Resposta anterior',thread_msgs:'mensagens na conversa'},
-  en:{dashboard:'Dashboard',projects:'Projects',pending_in:'Pending at',resp_internal:'Internal / Procurement',resp_am:'Area Manager',resp_client:'Client',resp_vendor:'Vendor',resp_blocked:'Blocked',total_projects:'Total projects',pending_internal:'Pending internal',blocked:'Blocked',awaits_vendor:'Awaiting vendor',recent_projects:'Recent projects',col_project:'Project',col_am:'Area Manager',col_pending:'Pending at',col_status:'Status',col_date:'Date',new_project:'New project',edit_project:'Edit project',back:'Back',copy_id:'Copy ID',edit:'Edit',change_resp:'Change',change_resp_title:'Change responsible',tab_timeline:'Timeline',tab_hw:'HW Changes',tab_info:'Details',add_email:'Email',import_eml:'Import .eml',add_file:'File',add_note:'Note',add_hw:'HW Change',import_email_lbl:'Import request email (.eml)',eml_drag:'Drag .eml here or click to select',eml_hint:'Outlook: File → Save As → .eml',id_auto:'auto-generated',name_lbl:'Name *',type_lbl:'Type',am_lbl:'Area Manager',client_lbl:'Client',vendor_lbl:'Vendor',deadline_lbl:'Deadline',desc_lbl:'Description',resp_lbl:'Pending at',resp_name_lbl:'Specific name',status_lbl:'Status',reason_lbl:'Reason',type_price:'Price request',type_lt:'Lead time',type_hw:'HW Change',type_mixed:'Price + Lead time',type_other:'Other',status_open:'Open',status_pending:'Awaiting info',status_closed:'Closed',cancel:'Cancel',save:'Save changes',confirm:'Confirm',create_project:'Create project',language:'Language',logout:'Sign out',auth_login:'Sign in',auth_register:'Create account',auth_no_account:"Don't have an account?",auth_has_account:'Already have an account?',entry_email:'Add email',entry_eml:'Import .eml',entry_file:'Add file',entry_note:'Add note',entry_hw:'Register HW change',from_lbl:'From',to_lbl:'To',subject_lbl:'Subject',body_lbl:'Body',file_name_lbl:'File name',file_type_lbl:'Type',file_notes_lbl:'Notes',ftype_quote:'Quote',ftype_spec:'Technical spec',ftype_email:'Exported email',ftype_other:'Other',component_lbl:'Component / Reference',old_ver:'Old version',new_ver:'New version',price_impact:'Price impact',pi_none:'No change',pi_up:'Increase',pi_down:'Decrease',justification_lbl:'Justification',since:'since',created_on:'Created on',am_label:'Area Manager',client_label:'Client',vendor_label:'Vendor',type_label:'Type',deadline_label:'Deadline',no_entries:'No entries yet.',no_hw:'No HW changes.',no_projects:'No projects found.',loading:'Loading...',copied:'ID copied. Paste in email subject: ',transfer:'Transfer',created_proj:'Project created',sb_menu:'Menu',filter_all:'All',filter_open:'Open',filter_pending:'Awaiting info',filter_closed:'Closed',filter_int:'Pending internal',filter_am:'Pending AM',filter_vendor:'Pending vendor',filter_blocked:'Blocked',prev_resp:'From',next_resp:'To',reason:'Reason',email_date:'Email date',email_preview:'View full email',click_to_view:'Click to view email',col_client:'Client',col_vendor:'Manufacturer',close_project:'Close',reopen_project:'Reopen',delete_project:'Delete',confirm_close:'Close project',confirm_reopen:'Reopen project',confirm_delete:'Delete project',delete_warning:'This action is irreversible. All data will be permanently deleted.',status_changed:'Status changed',reply:'Previous reply',thread_msgs:'messages in thread'},
-  es:{dashboard:'Dashboard',projects:'Proyectos',pending_in:'Pendiente en',resp_internal:'Interno / Compras',resp_am:'Area Manager',resp_client:'Cliente',resp_vendor:'Proveedor',resp_blocked:'Bloqueado',total_projects:'Total proyectos',pending_internal:'Pendiente interno',blocked:'Bloqueados',awaits_vendor:'Espera proveedor',recent_projects:'Proyectos recientes',col_project:'Proyecto',col_am:'Area Manager',col_pending:'Pendiente en',col_status:'Estado',col_date:'Fecha',new_project:'Nuevo proyecto',edit_project:'Editar proyecto',back:'Volver',copy_id:'Copiar ID',edit:'Editar',change_resp:'Cambiar',change_resp_title:'Cambiar responsable',tab_timeline:'Cronología',tab_hw:'Cambios HW',tab_info:'Detalles',add_email:'Email',import_eml:'Importar .eml',add_file:'Archivo',add_note:'Nota',add_hw:'Cambio HW',import_email_lbl:'Importar email del pedido (.eml)',eml_drag:'Arrastra el .eml aquí o haz clic',eml_hint:'Outlook: Archivo → Guardar como → .eml',id_auto:'generado automáticamente',name_lbl:'Nombre *',type_lbl:'Tipo',am_lbl:'Area Manager',client_lbl:'Cliente',vendor_lbl:'Proveedor',deadline_lbl:'Plazo',desc_lbl:'Descripción',resp_lbl:'Pendiente en',resp_name_lbl:'Nombre específico',status_lbl:'Estado',reason_lbl:'Motivo',type_price:'Solicitud precio',type_lt:'Lead time',type_hw:'Cambio HW',type_mixed:'Precio + Lead time',type_other:'Otro',status_open:'Abierto',status_pending:'Espera información',status_closed:'Cerrado',cancel:'Cancelar',save:'Guardar cambios',confirm:'Confirmar',create_project:'Crear proyecto',language:'Idioma',logout:'Cerrar sesión',auth_login:'Entrar',auth_register:'Crear cuenta',auth_no_account:'¿No tienes cuenta?',auth_has_account:'¿Ya tienes cuenta?',entry_email:'Añadir email',entry_eml:'Importar .eml',entry_file:'Añadir archivo',entry_note:'Añadir nota',entry_hw:'Registrar cambio HW',from_lbl:'De',to_lbl:'Para',subject_lbl:'Asunto',body_lbl:'Contenido',file_name_lbl:'Nombre archivo',file_type_lbl:'Tipo',file_notes_lbl:'Notas',ftype_quote:'Cotización',ftype_spec:'Especificación técnica',ftype_email:'Email exportado',ftype_other:'Otro',component_lbl:'Componente / Referencia',old_ver:'Versión anterior',new_ver:'Versión nueva',price_impact:'Impacto precio',pi_none:'Sin cambio',pi_up:'Aumento',pi_down:'Reducción',justification_lbl:'Justificación',since:'desde',created_on:'Creado el',am_label:'Area Manager',client_label:'Cliente',vendor_label:'Proveedor',type_label:'Tipo',deadline_label:'Plazo',no_entries:'Sin entradas aún.',no_hw:'Sin cambios HW.',no_projects:'Ningún proyecto encontrado.',loading:'Cargando...',copied:'ID copiado. Pégalo en el asunto: ',transfer:'Transferencia',created_proj:'Proyecto creado',sb_menu:'Menú',filter_all:'Todos',filter_open:'Abierto',filter_pending:'Espera info',filter_closed:'Cerrados',filter_int:'Pendiente interno',filter_am:'Pendiente AM',filter_vendor:'Pendiente proveedor',filter_blocked:'Bloqueados',prev_resp:'De',next_resp:'Para',reason:'Motivo',email_date:'Fecha email',email_preview:'Ver email completo',click_to_view:'Haz clic para ver el email',close_project:'Cerrar',reopen_project:'Reabrir',delete_project:'Eliminar',confirm_close:'Cerrar proyecto',confirm_reopen:'Reabrir proyecto',confirm_delete:'Eliminar proyecto',delete_warning:'Esta acción es irreversible. Todos los datos serán eliminados.',status_changed:'Estado cambiado',reply:'Respuesta anterior',thread_msgs:'mensajes en la conversación'}
+  pt:{dashboard:'Dashboard',projects:'Projetos',pending_in:'Pendente em',resp_internal:'Interno / Procurement',resp_am:'Area Manager',resp_client:'Cliente',resp_vendor:'Fornecedor',resp_blocked:'Bloqueado',total_projects:'Total projetos',pending_internal:'Pendente interno',blocked:'Bloqueados',awaits_vendor:'Aguarda fornecedor',recent_projects:'Projetos recentes',col_project:'Projeto',col_am:'Area Manager',col_pending:'Pendente em',col_status:'Estado',col_date:'Data',new_project:'Novo projeto',edit_project:'Editar projeto',back:'Voltar',copy_id:'Copiar ID',edit:'Editar',change_resp:'Alterar',change_resp_title:'Alterar responsável',tab_timeline:'Cronologia',tab_hw:'Alterações HW',tab_info:'Detalhes',add_email:'Email',import_eml:'Importar .eml',add_file:'Ficheiro',add_note:'Nota',add_hw:'Alteração HW',import_email_lbl:'Importar email do pedido (.eml)',eml_drag:'Arrasta o .eml aqui ou clica para selecionar',eml_hint:'Outlook: Ficheiro → Guardar como → .eml',id_auto:'gerado automaticamente',name_lbl:'Nome *',type_lbl:'Tipo',am_lbl:'Area Manager',client_lbl:'Cliente',vendor_lbl:'Fornecedor',deadline_lbl:'Prazo',desc_lbl:'Descrição',resp_lbl:'Pendente em',resp_name_lbl:'Nome específico',status_lbl:'Estado',reason_lbl:'Motivo',type_price:'Pedido de preço',type_lt:'Lead time',type_hw:'Alteração HW',type_mixed:'Preço + Lead time',type_other:'Outro',status_open:'Em aberto',status_pending:'Aguarda informação',status_closed:'Fechado',cancel:'Cancelar',save:'Guardar alterações',confirm:'Confirmar',create_project:'Criar projeto',language:'Idioma',logout:'Sair',auth_login:'Entrar',auth_register:'Criar conta',auth_no_account:'Não tens conta?',auth_has_account:'Já tens conta?',entry_email:'Adicionar email',entry_eml:'Importar .eml',entry_file:'Adicionar ficheiro',entry_note:'Adicionar nota',entry_hw:'Registar alteração HW',from_lbl:'De',to_lbl:'Para',subject_lbl:'Assunto',body_lbl:'Conteúdo',file_name_lbl:'Nome do ficheiro',file_type_lbl:'Tipo',file_notes_lbl:'Notas',ftype_quote:'Cotação',ftype_spec:'Especificação técnica',ftype_email:'Email exportado',ftype_other:'Outro',component_lbl:'Componente / Referência',old_ver:'Versão anterior',new_ver:'Versão nova',price_impact:'Impacto preço',pi_none:'Sem alteração',pi_up:'Aumento',pi_down:'Redução',justification_lbl:'Justificação',since:'desde',created_on:'Criado em',am_label:'Area Manager',client_label:'Cliente',vendor_label:'Fornecedor',type_label:'Tipo',deadline_label:'Prazo',no_entries:'Sem entradas ainda.',no_hw:'Sem alterações HW.',no_projects:'Nenhum projeto encontrado.',loading:'A carregar...',copied:'ID copiado. Cola no assunto dos emails: ',transfer:'Transferência',created_proj:'Projeto criado',sb_menu:'Menu',filter_all:'Todos',filter_open:'Em aberto',filter_pending:'Aguarda info',filter_closed:'Fechados',filter_int:'Pendente interno',filter_am:'Pendente AM',filter_vendor:'Pendente fornecedor',filter_blocked:'Bloqueados',prev_resp:'De',next_resp:'Para',reason:'Motivo',email_date:'Data do email',email_preview:'Ver email completo',click_to_view:'Clica para ver o email',col_client:'Cliente',col_vendor:'Fabricante',close_project:'Encerrar',reopen_project:'Reabrir',delete_project:'Apagar',confirm_close:'Encerrar projeto',confirm_reopen:'Reabrir projeto',confirm_delete:'Apagar projeto',delete_warning:'Esta ação é irreversível. Todos os dados serão eliminados.',status_changed:'Estado alterado',reply:'Resposta anterior',thread_msgs:'mensagens na conversa',delete_entry:'Apagar entrada',confirm_delete_entry:'Apagar esta entrada da cronologia?'},
+  en:{dashboard:'Dashboard',projects:'Projects',pending_in:'Pending at',resp_internal:'Internal / Procurement',resp_am:'Area Manager',resp_client:'Client',resp_vendor:'Vendor',resp_blocked:'Blocked',total_projects:'Total projects',pending_internal:'Pending internal',blocked:'Blocked',awaits_vendor:'Awaiting vendor',recent_projects:'Recent projects',col_project:'Project',col_am:'Area Manager',col_pending:'Pending at',col_status:'Status',col_date:'Date',new_project:'New project',edit_project:'Edit project',back:'Back',copy_id:'Copy ID',edit:'Edit',change_resp:'Change',change_resp_title:'Change responsible',tab_timeline:'Timeline',tab_hw:'HW Changes',tab_info:'Details',add_email:'Email',import_eml:'Import .eml',add_file:'File',add_note:'Note',add_hw:'HW Change',import_email_lbl:'Import request email (.eml)',eml_drag:'Drag .eml here or click to select',eml_hint:'Outlook: File → Save As → .eml',id_auto:'auto-generated',name_lbl:'Name *',type_lbl:'Type',am_lbl:'Area Manager',client_lbl:'Client',vendor_lbl:'Vendor',deadline_lbl:'Deadline',desc_lbl:'Description',resp_lbl:'Pending at',resp_name_lbl:'Specific name',status_lbl:'Status',reason_lbl:'Reason',type_price:'Price request',type_lt:'Lead time',type_hw:'HW Change',type_mixed:'Price + Lead time',type_other:'Other',status_open:'Open',status_pending:'Awaiting info',status_closed:'Closed',cancel:'Cancel',save:'Save changes',confirm:'Confirm',create_project:'Create project',language:'Language',logout:'Sign out',auth_login:'Sign in',auth_register:'Create account',auth_no_account:"Don't have an account?",auth_has_account:'Already have an account?',entry_email:'Add email',entry_eml:'Import .eml',entry_file:'Add file',entry_note:'Add note',entry_hw:'Register HW change',from_lbl:'From',to_lbl:'To',subject_lbl:'Subject',body_lbl:'Body',file_name_lbl:'File name',file_type_lbl:'Type',file_notes_lbl:'Notes',ftype_quote:'Quote',ftype_spec:'Technical spec',ftype_email:'Exported email',ftype_other:'Other',component_lbl:'Component / Reference',old_ver:'Old version',new_ver:'New version',price_impact:'Price impact',pi_none:'No change',pi_up:'Increase',pi_down:'Decrease',justification_lbl:'Justification',since:'since',created_on:'Created on',am_label:'Area Manager',client_label:'Client',vendor_label:'Vendor',type_label:'Type',deadline_label:'Deadline',no_entries:'No entries yet.',no_hw:'No HW changes.',no_projects:'No projects found.',loading:'Loading...',copied:'ID copied. Paste in email subject: ',transfer:'Transfer',created_proj:'Project created',sb_menu:'Menu',filter_all:'All',filter_open:'Open',filter_pending:'Awaiting info',filter_closed:'Closed',filter_int:'Pending internal',filter_am:'Pending AM',filter_vendor:'Pending vendor',filter_blocked:'Blocked',prev_resp:'From',next_resp:'To',reason:'Reason',email_date:'Email date',email_preview:'View full email',click_to_view:'Click to view email',col_client:'Client',col_vendor:'Manufacturer',close_project:'Close',reopen_project:'Reopen',delete_project:'Delete',confirm_close:'Close project',confirm_reopen:'Reopen project',confirm_delete:'Delete project',delete_warning:'This action is irreversible. All data will be permanently deleted.',status_changed:'Status changed',reply:'Previous reply',thread_msgs:'messages in thread',delete_entry:'Delete entry',confirm_delete_entry:'Delete this timeline entry?'},
+  es:{dashboard:'Dashboard',projects:'Proyectos',pending_in:'Pendiente en',resp_internal:'Interno / Compras',resp_am:'Area Manager',resp_client:'Cliente',resp_vendor:'Proveedor',resp_blocked:'Bloqueado',total_projects:'Total proyectos',pending_internal:'Pendiente interno',blocked:'Bloqueados',awaits_vendor:'Espera proveedor',recent_projects:'Proyectos recientes',col_project:'Proyecto',col_am:'Area Manager',col_pending:'Pendiente en',col_status:'Estado',col_date:'Fecha',new_project:'Nuevo proyecto',edit_project:'Editar proyecto',back:'Volver',copy_id:'Copiar ID',edit:'Editar',change_resp:'Cambiar',change_resp_title:'Cambiar responsable',tab_timeline:'Cronología',tab_hw:'Cambios HW',tab_info:'Detalles',add_email:'Email',import_eml:'Importar .eml',add_file:'Archivo',add_note:'Nota',add_hw:'Cambio HW',import_email_lbl:'Importar email del pedido (.eml)',eml_drag:'Arrastra el .eml aquí o haz clic',eml_hint:'Outlook: Archivo → Guardar como → .eml',id_auto:'generado automáticamente',name_lbl:'Nombre *',type_lbl:'Tipo',am_lbl:'Area Manager',client_lbl:'Cliente',vendor_lbl:'Proveedor',deadline_lbl:'Plazo',desc_lbl:'Descripción',resp_lbl:'Pendiente en',resp_name_lbl:'Nombre específico',status_lbl:'Estado',reason_lbl:'Motivo',type_price:'Solicitud precio',type_lt:'Lead time',type_hw:'Cambio HW',type_mixed:'Precio + Lead time',type_other:'Otro',status_open:'Abierto',status_pending:'Espera información',status_closed:'Cerrado',cancel:'Cancelar',save:'Guardar cambios',confirm:'Confirmar',create_project:'Crear proyecto',language:'Idioma',logout:'Cerrar sesión',auth_login:'Entrar',auth_register:'Crear cuenta',auth_no_account:'¿No tienes cuenta?',auth_has_account:'¿Ya tienes cuenta?',entry_email:'Añadir email',entry_eml:'Importar .eml',entry_file:'Añadir archivo',entry_note:'Añadir nota',entry_hw:'Registrar cambio HW',from_lbl:'De',to_lbl:'Para',subject_lbl:'Asunto',body_lbl:'Contenido',file_name_lbl:'Nombre archivo',file_type_lbl:'Tipo',file_notes_lbl:'Notas',ftype_quote:'Cotización',ftype_spec:'Especificación técnica',ftype_email:'Email exportado',ftype_other:'Otro',component_lbl:'Componente / Referencia',old_ver:'Versión anterior',new_ver:'Versión nueva',price_impact:'Impacto precio',pi_none:'Sin cambio',pi_up:'Aumento',pi_down:'Reducción',justification_lbl:'Justificación',since:'desde',created_on:'Creado el',am_label:'Area Manager',client_label:'Cliente',vendor_label:'Proveedor',type_label:'Tipo',deadline_label:'Plazo',no_entries:'Sin entradas aún.',no_hw:'Sin cambios HW.',no_projects:'Ningún proyecto encontrado.',loading:'Cargando...',copied:'ID copiado. Pégalo en el asunto: ',transfer:'Transferencia',created_proj:'Proyecto creado',sb_menu:'Menú',filter_all:'Todos',filter_open:'Abierto',filter_pending:'Espera info',filter_closed:'Cerrados',filter_int:'Pendiente interno',filter_am:'Pendiente AM',filter_vendor:'Pendiente proveedor',filter_blocked:'Bloqueados',prev_resp:'De',next_resp:'Para',reason:'Motivo',email_date:'Fecha email',email_preview:'Ver email completo',click_to_view:'Haz clic para ver el email',close_project:'Cerrar',reopen_project:'Reabrir',delete_project:'Eliminar',confirm_close:'Cerrar proyecto',confirm_reopen:'Reabrir proyecto',confirm_delete:'Eliminar proyecto',delete_warning:'Esta acción es irreversible. Todos los datos serán eliminados.',status_changed:'Estado cambiado',reply:'Respuesta anterior',thread_msgs:'mensajes en la conversación',delete_entry:'Eliminar entrada',confirm_delete_entry:'¿Eliminar esta entrada de la cronología?'}
 };
 
 let lang='pt', currentUser=null, currentProfile=null;
@@ -763,6 +765,15 @@ function renderBanner(proj){
   document.getElementById('resp-since').textContent=proj.resp_since?t('since')+' '+new Date(proj.resp_since).toLocaleString():'';
 }
 
+// ── DELETE TIMELINE ENTRY ────────────────────────────────────
+async function deleteTimelineEntry(entryId, event){
+  event.stopPropagation();
+  if(!confirm(t('confirm_delete_entry')||'Apagar esta entrada da cronologia?')) return;
+  const{error}=await sb.from('timeline_entries').delete().eq('id',entryId);
+  if(error){alert(error.message);return;}
+  await loadTimeline(currentProjectId);
+}
+
 // ── CLOSE / REOPEN / DELETE ──────────────────────────────────
 async function closeProject(){
   const proj=projects.find(p=>p.id===currentProjectId);
@@ -817,7 +828,10 @@ async function loadTimeline(pid){
     return`<div class="tl-item" id="tl-${e.id}">
       <div class="tl-ic ${icCls[e.entry_type]||'ic-note'}">${icons[e.entry_type]||'📝'}</div>
       <div class="tl-body">
-        <div class="tl-meta">${new Date(e.created_at).toLocaleString()}${e.label?' · '+e.label:''}${e.profiles?.full_name?' · '+e.profiles.full_name:''}</div>
+        <div class="tl-meta" style="display:flex;align-items:center;gap:6px">
+          <span>${new Date(e.created_at).toLocaleString()}${e.label?' · '+e.label:''}${e.profiles?.full_name?' · '+e.profiles.full_name:''}</span>
+          ${e.entry_type!=='resp'?`<button onclick="deleteTimelineEntry('${e.id}',event)" style="margin-left:auto;padding:1px 6px;border:.5px solid transparent;border-radius:4px;background:transparent;cursor:pointer;font-size:11px;color:var(--text3);opacity:0;transition:opacity .15s" class="tl-del-btn" title="${t('delete_entry')||'Apagar'}">🗑</button>`:''}
+        </div>
         ${isEmail
           ?`<div class="tl-txt tl-email-entry${activeEmailEntryId===e.id?' active':''}" onclick="openEmailPanel(${JSON.stringify(e).replace(/"/g,'&quot;')},'tl-${e.id}')">
               ${previewText?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px">${esc(previewText)}</div>`:''}
@@ -984,10 +998,8 @@ async function saveProject(){
   await sb.from('timeline_entries').insert({project_id:data.id,entry_type:'resp',label:t('created_proj'),content:t('created_proj')+' '+data.project_ref+'. '+t('pending_in')+': '+RLABELS()[resp1]+(respName!==RLABELS()[resp1]?' ('+respName+')':'')+'.',created_by:currentUser.id});
   if(emlData.new){
     const d=emlData.new;
-    const threadText=d.thread&&d.thread.length>1
-      ? d.thread.map((seg,i)=>i===0?seg:'\n--- '+(t('reply')||'Resposta')+' '+(d.thread.length-i)+' ---\n'+seg).join('\n')
-      : (d.body||'');
-    await sb.from('timeline_entries').insert({project_id:data.id,entry_type:'email',label:d.subject||d.filename,content:'De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+threadText.slice(0,3000),created_by:currentUser.id});
+    const emailBody=d.fullContent||d.body||'';
+    await sb.from('timeline_entries').insert({project_id:data.id,entry_type:'email',label:d.subject||d.filename,content:'De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+emailBody,created_by:currentUser.id});
   }
   closeModal('ov-new');
   await loadProjects();
@@ -1033,10 +1045,8 @@ async function saveEntry(){
   }else if(currentEntryType==='eml'){
     const d=emlData.entry;if(!d){alert(t('import_eml')+'!');return;}
     label=d.subject||d.filename;
-    const threadText=d.thread&&d.thread.length>1
-      ? d.thread.map((seg,i)=>i===0?seg:'\n--- '+(t('reply')||'Resposta')+' '+(d.thread.length-i)+' ---\n'+seg).join('\n')
-      : (d.body||'');
-    content='De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+threadText.slice(0,3000);
+    const emailBody=d.fullContent||d.body||'';
+    content='De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+emailBody;
     entryType='email';
   }else if(currentEntryType==='file'){
     const fname=document.getElementById('e-fname').value.trim();if(!fname){alert(t('file_name_lbl')+'!');return;}
@@ -1223,54 +1233,66 @@ function parseEml(text){
     body=extractPart(bodyRaw,ct,enc);
   }
 
-  // Trim and limit
+  // Normalize
   body=body.replace(/\r\n|\r/g,'\n').replace(/\n{4,}/g,'\n\n\n').trim();
 
-  // ── Extract full thread (quoted replies) ──────────────────
-  // Split by common reply separators and keep all meaningful parts
+  // ── Extract full thread BEFORE truncating ─────────────────
   const threadFull = extractThread(body);
 
-  return{subject,from,to,date:dateStr,body:body.slice(0,1200),thread:threadFull};
+  // Store full thread content (up to 4000 chars total)
+  const fullContent = threadFull.length > 1
+    ? threadFull.map((seg,i) => i===0 ? seg : '\n%%REPLY%%\n'+seg).join('\n')
+    : body;
+
+  return{subject,from,to,date:dateStr,body:body.slice(0,1200),thread:threadFull,fullContent:fullContent.slice(0,4000)};
 }
 
 function extractThread(body){
-  // Patterns that mark a quoted reply in PT/EN/ES emails
+  if(!body||body.trim().length<20) return [body||''];
+
+  // Normalize common inline separators to newlines first
+  let normalized = body
+    .replace(/(-{3,}\s*(?:mensagem original|original message|mensaje original)\s*-{3,})/gi, '\n$1\n')
+    .replace(/(_{5,})/g, '\n$1\n')
+    .replace(/\n(De:|From:|Para:|To:)/g, '\n\n$1')
+    .replace(/\n(Em\s.+escreveu:)/gi, '\n\n$1')
+    .replace(/\n(On\s.+wrote:)/gi, '\n\n$1')
+    .replace(/\n(El\s.+escribió:)/gi, '\n\n$1');
+
+  // Patterns that mark start of a quoted reply
   const separators=[
-    /^-{3,}.*mensagem original.*-{3,}/im,
-    /^-{3,}.*original message.*-{3,}/im,
-    /^-{3,}.*mensaje original.*-{3,}/im,
-    /^_{3,}/m,
-    /^De:.*Enviado:/im,
-    /^From:.*Sent:/im,
-    /^Em.*escreveu:/im,
-    /^On.*wrote:/im,
-    /^El.*escribió:/im,
-    /^>{1}/m,
+    /-{3,}\s*(?:mensagem original|original message|mensaje original)\s*-{3,}/i,
+    /_{5,}/,
+    /^\s*De:\s*.+\n\s*(?:Para|Enviado|Assunto):/im,
+    /^\s*From:\s*.+\n\s*(?:To|Sent|Subject):/im,
+    /^\s*Em\s.+escreveu:/im,
+    /^\s*On\s.+wrote:/im,
+    /^\s*El\s.+escribió:/im,
+    /^>{2,}/m,
   ];
 
-  // Build thread segments
   const segments=[];
-  let remaining=body;
+  let remaining=normalized;
   let safety=0;
 
-  while(remaining.trim().length>20 && safety<10){
+  while(remaining.trim().length>15 && safety<15){
     safety++;
     let splitAt=remaining.length;
-    let matchedSep=null;
+    let sepLen=1;
     for(const sep of separators){
       const m=remaining.match(sep);
       if(m && m.index !== undefined && m.index < splitAt){
         splitAt=m.index;
-        matchedSep=m[0];
+        sepLen=m[0].length;
       }
     }
     const part=remaining.slice(0,splitAt).trim();
     if(part.length>10) segments.push(part);
     if(splitAt===remaining.length) break;
-    remaining=remaining.slice(splitAt+(matchedSep?matchedSep.length:1)).trim();
+    remaining=remaining.slice(splitAt+sepLen).trim();
   }
 
-  return segments.length>0 ? segments : [body.slice(0,2000)];
+  return segments.length>0 ? segments : [body];
 }
 
 function dzDrag(e,id,over){e.preventDefault();document.getElementById(id)?.classList.toggle('over',over);}
