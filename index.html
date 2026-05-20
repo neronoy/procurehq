@@ -836,7 +836,7 @@ async function loadTimeline(pid){
         ${isEmail
           ?`<div class="tl-txt tl-email-entry${activeEmailEntryId===e.id?' active':''}" onclick="openEmailPanel(${JSON.stringify(e).replace(/"/g,'&quot;')},'tl-${e.id}')">
               ${previewText?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px">${esc(previewText)}</div>`:''}
-              <div style="font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((parsed?.body||e.content).slice(0,120))}</div>
+              <div style="font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((parsed?.body||e.content||'').slice(0,120))}</div>
               <div class="email-open-hint">👁 ${t('click_to_view')}</div>
             </div>`
           :`<div class="${e.entry_type==='resp'?'tl-resp':'tl-txt'}">${esc(e.content)}</div>`
@@ -875,20 +875,8 @@ function openEmailPanel(entry, tlId){
   document.getElementById('ep-title').textContent=parsed.subject||entry.label||t('add_email');
 
   const epBody=document.getElementById('ep-body');
-  // Extract thread segments for display
-  // Content stored with %%REPLY%% separators from parseEml
+  // Show email content as single scrollable block — works with any email client
   const storedContent=parsed.body||entry.content||'';
-  const threadSegs=storedContent.includes('%%REPLY%%')
-    ? storedContent.split('%%REPLY%%').map(s=>s.trim()).filter(s=>s.length>5)
-    : extractThread(storedContent);
-  const threadHtml=threadSegs.length>1
-    ? threadSegs.map((seg,i)=>{
-        const isReply=i>0;
-        return '<div style="margin-bottom:14px;'+(isReply?'border-left:3px solid var(--border2);padding-left:10px;opacity:0.88':'')+'">'
-          +(isReply?'<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:6px">'+(t('reply')||'Resposta anterior')+' '+(threadSegs.length-i)+'</div>':'')
-          +'<div class="ep-body-text">'+esc(seg)+'</div></div>';
-      }).join('<div style="height:.5px;background:var(--border);margin:10px 0"></div>')
-    : '<div class="ep-body-text">'+esc(storedContent)+'</div>';
 
   epBody.innerHTML=`
     <div class="ep-field">
@@ -908,10 +896,10 @@ function openEmailPanel(entry, tlId){
       <div class="ep-value">${esc(parsed.date||new Date(entry.created_at).toLocaleString())}</div>
     </div>
     ${entry.label?'<div class="ep-field"><span class="ep-tag">📎 '+esc(entry.label)+'</span></div>':''}
-    ${threadSegs.length>1?'<div class="ep-field"><span class="ep-tag" style="background:var(--blue-bg);color:var(--blue-dk)">💬 '+threadSegs.length+' '+(t('thread_msgs')||'mensagens na conversa')+'</span></div>':''}
     <div class="ep-divider"></div>
     <div class="ep-label" style="margin-bottom:8px">${t('body_lbl')}</div>
-  `+threadHtml;
+    <div class="ep-body-text">${esc(storedContent)}</div>
+  `;
   document.getElementById('email-panel').classList.add('open');
 }
 
@@ -1003,7 +991,7 @@ async function saveProject(){
   if(emlData.new){
     const d=emlData.new;
     const emailBody=d.fullContent||d.body||'';
-    await sb.from('timeline_entries').insert({project_id:data.id,entry_type:'email',label:d.subject||d.filename,content:'De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+emailBody,created_by:currentUser.id});
+    await sb.from('timeline_entries').insert({project_id:data.id,entry_type:'email',label:d.subject||d.filename||'Email',content:'De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+emailBody,created_by:currentUser.id});
   }
   closeModal('ov-new');
   await loadProjects();
@@ -1103,18 +1091,18 @@ async function saveResp(){
 // ── EML ───────────────────────────────────────────────────────
 function parseEml(text){
 
-  function parseHeaders(block){
+  function parseHeaders(raw){
     const hdrs={};
-    const lines=block.split(/\r?\n/);
+    const lines=raw.split(/\r?\n/);
     let i=0;
     while(i<lines.length){
       const l=lines[i];
-      if(l.trim()==='')break;
+      if(!l.trim()) break;
       const m=l.match(/^([\w\-]+):\s*(.*)$/);
       if(m){
-        let key=m[1].toLowerCase(),val=m[2];
-        while(i+1<lines.length&&/^[ \t]/.test(lines[i+1])){i++;val+=' '+lines[i].trim();}
-        hdrs[key]=val.trim();
+        let k=m[1].toLowerCase(), v=m[2];
+        while(i+1<lines.length && /^[ \t]/.test(lines[i+1])){i++; v+=' '+lines[i].trim();}
+        hdrs[k]=v.trim();
       }
       i++;
     }
@@ -1122,185 +1110,112 @@ function parseEml(text){
   }
 
   function decodeRfc2047(str){
-    return (str||'').replace(/=\?([^?]+)\?([bBqQ])\?([^?]*)\?=/g,(_,charset,enc,data)=>{
+    return (str||'').replace(/=\?([^?]+)\?([bBqQ])\?([^?]*)\?=/g,(_,cs,enc,data)=>{
       try{
         if(enc.toUpperCase()==='B'){
           const bytes=atob(data.replace(/-/g,'+').replace(/_/g,'/'));
-          if(charset.toLowerCase().startsWith('utf'))return decodeURIComponent(bytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));
-          return bytes;
+          try{return decodeURIComponent(bytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));}
+          catch{return bytes;}
         }
         return data.replace(/_/g,' ').replace(/=([0-9A-Fa-f]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
       }catch{return data;}
     });
   }
 
-  function decodeQP(str){
-    return str.replace(/=\r?\n/g,'').replace(/=([0-9A-Fa-f]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
-  }
-
   function decodeB64(str){
     try{
-      const clean=str.replace(/\s+/g,'');
-      const bytes=atob(clean);
+      const bytes=atob(str.replace(/\s+/g,''));
       try{return decodeURIComponent(bytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));}
       catch{return bytes;}
     }catch{return str;}
   }
 
-  // Extract thread segments FROM HTML before stripping tags
-  // Outlook uses <div style="border-top:..."> or <hr> to separate replies
-  function extractThreadFromHtml(html){
-    // Normalize Outlook reply dividers to a placeholder
-    let normalized = html
-      // Outlook "From:" block inside a div/p — typical reply header
-      .replace(/<div[^>]*>\s*<b>From:<\/b>/gi, '%%SPLIT%%<div><b>From:</b>')
-      .replace(/<div[^>]*>\s*<b>De:<\/b>/gi, '%%SPLIT%%<div><b>De:</b>')
-      .replace(/<div[^>]*>\s*<b>De:\s*<\/b>/gi, '%%SPLIT%%<div><b>De: </b>')
-      // <hr> separators
-      .replace(/<hr[^>]*>/gi, '%%SPLIT%%')
-      // Outlook border-top div separators
-      .replace(/<div[^>]*border-top[^>]*>/gi, '%%SPLIT%%<div>')
-      // blockquote = older reply
-      .replace(/<blockquote[^>]*>/gi, '%%SPLIT%%<blockquote>')
-      .replace(/<\/blockquote>/gi, '<\/blockquote>%%SPLIT%%');
-
-    // Split and process each segment
-    const rawSegs = normalized.split('%%SPLIT%%');
-    const segments = [];
-    for(const seg of rawSegs){
-      const stripped = stripHtml(seg);
-      if(stripped.trim().length > 15) segments.push(stripped.trim());
-    }
-    return segments.length > 0 ? segments : null;
+  function decodeQP(str){
+    return str.replace(/=\r?\n/g,'').replace(/=([0-9A-Fa-f]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
   }
 
-  function stripHtml(str){
-    return str
+  function htmlToText(html){
+    return html
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'')
       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'')
       .replace(/<br\s*\/?>/gi,'\n')
-      .replace(/<\/p>/gi,'\n').replace(/<\/div>/gi,'\n').replace(/<\/li>/gi,'\n')
+      .replace(/<\/p>|<\/div>|<\/li>|<\/tr>/gi,'\n')
       .replace(/<[^>]+>/g,'')
-      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")
-      .replace(/\r\n|\r/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+      .replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")
+      .replace(/\r\n|\r/g,'\n').replace(/\n{4,}/g,'\n\n\n').trim();
   }
 
-  function extractPart(rawBody,ct,enc){
-    let decoded=rawBody;
-    if(enc==='base64') decoded=decodeB64(rawBody);
-    else if(enc==='quoted-printable') decoded=decodeQP(rawBody);
-    return decoded;
-  }
-
-  function parsePart(raw){
-    const sep=raw.search(/\r?\n\r?\n/);
-    if(sep===-1)return{headers:{},body:raw};
-    return{headers:parseHeaders(raw.slice(0,sep)),body:raw.slice(sep).replace(/^\r?\n/,'')};
-  }
-
-  // ── Recursively find all text parts ──────────────────────────
-  function findParts(rawBody, ct){
-    const result={plain:'',html:''};
+  // Recursively find best text body from MIME parts
+  function findBody(rawBody, ct){
     const bm=(ct||'').match(/boundary="?([^";\r\n]+)"?/i);
-    if(!bm) return result;
+    if(!bm) return {plain:'',html:''};
     const boundary='--'+bm[1].trim();
     const parts=rawBody.split(new RegExp(boundary+'(?:--)?(?:\r?\n|$)'));
+    let plain='', html='';
     for(const part of parts){
       if(!part||!part.trim()||part.trim()==='--') continue;
-      const p=parsePart(part);
-      const pct=(p.headers['content-type']||'').toLowerCase();
-      const penc=(p.headers['content-transfer-encoding']||'').toLowerCase().trim();
+      const sep=part.search(/\r?\n\r?\n/);
+      if(sep===-1) continue;
+      const hdrs=parseHeaders(part.slice(0,sep));
+      const body=part.slice(sep).replace(/^\r?\n/,'');
+      const pct=(hdrs['content-type']||'').toLowerCase();
+      const penc=(hdrs['content-transfer-encoding']||'').toLowerCase().trim();
+      let decoded=body;
+      if(penc==='base64') decoded=decodeB64(body);
+      else if(penc==='quoted-printable') decoded=decodeQP(body);
       if(pct.includes('multipart')){
-        const nested=findParts(p.body, p.headers['content-type']||'');
-        if(nested.html&&!result.html) result.html=nested.html;
-        if(nested.plain&&!result.plain) result.plain=nested.plain;
-      }else if(pct.includes('text/html')&&!result.html){
-        result.html=extractPart(p.body,pct,penc);
-      }else if(pct.includes('text/plain')&&!result.plain){
-        result.plain=extractPart(p.body,pct,penc);
+        const nested=findBody(decoded, hdrs['content-type']||'');
+        if(!html && nested.html) html=nested.html;
+        if(!plain && nested.plain) plain=nested.plain;
+      } else if(pct.includes('text/html') && !html){
+        html=decoded;
+      } else if(pct.includes('text/plain') && !plain){
+        plain=decoded;
       }
     }
-    return result;
+    return {plain, html};
   }
 
   // ── Main ──────────────────────────────────────────────────────
-  const nlnl=text.search(/\r?\n\r?\n/);
-  const hdrRaw=nlnl!==-1?text.slice(0,nlnl):text;
-  const bodyRaw=nlnl!==-1?text.slice(nlnl).replace(/^\r?\n/,''):'';
-  const headers=parseHeaders(hdrRaw);
-  const ct=headers['content-type']||'';
+  const nlnl = text.search(/\r?\n\r?\n/);
+  const hdrRaw = nlnl !== -1 ? text.slice(0, nlnl) : text;
+  const bodyRaw = nlnl !== -1 ? text.slice(nlnl).replace(/^\r?\n/, '') : '';
+  const headers = parseHeaders(hdrRaw);
+  const ct = headers['content-type'] || '';
 
-  const subject=decodeRfc2047(headers['subject']||'');
-  const from=decodeRfc2047((headers['from']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim());
-  const to=decodeRfc2047((headers['to']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim());
+  const subject = decodeRfc2047(headers['subject'] || '');
+  const from = decodeRfc2047((headers['from']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim());
+  const to = decodeRfc2047((headers['to']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim());
   let dateStr='';
   try{const d=new Date(headers['date']||'');if(!isNaN(d))dateStr=d.toISOString().slice(0,10);}catch(e){}
 
-  let threadSegs=null;
-  let plainText='';
+  let body='';
 
   if(ct.includes('multipart')){
-    const parts=findParts(bodyRaw,ct);
-    // Try to extract thread from HTML first (has full history)
+    const parts=findBody(bodyRaw, ct);
+    // Prefer HTML — it has the full thread content in Outlook emails
+    // Fall back to plain text
     if(parts.html){
-      threadSegs=extractThreadFromHtml(parts.html);
+      body=htmlToText(parts.html);
+    } else if(parts.plain){
+      body=parts.plain.replace(/\r\n|\r/g,'\n').trim();
     }
-    // Fallback to plain
-    if(!threadSegs||threadSegs.length===0){
-      plainText=stripHtml(parts.plain||parts.html||'');
-      threadSegs=extractThread(plainText);
-    }
-  }else{
+  } else {
     const enc=(headers['content-transfer-encoding']||'').toLowerCase().trim();
-    const raw=extractPart(bodyRaw,ct,enc);
-    plainText=ct.includes('text/html')?stripHtml(raw):raw;
-    threadSegs=extractThread(plainText);
+    let raw=bodyRaw;
+    if(enc==='base64') raw=decodeB64(bodyRaw);
+    else if(enc==='quoted-printable') raw=decodeQP(bodyRaw);
+    body=ct.includes('text/html') ? htmlToText(raw) : raw.replace(/\r\n|\r/g,'\n').trim();
   }
 
-  if(!threadSegs||threadSegs.length===0) threadSegs=[plainText||''];
+  // Clean up excessive whitespace
+  body = body.replace(/\n{4,}/g,'\n\n\n').trim();
 
-  // ── Clean up thread segments ─────────────────────────────────
-  // Keep only:
-  // 1. The first segment (latest message — always keep regardless)
-  // 2. Segments that look like email replies (start with De:/From:/Enviado:/Sent:)
-  //    OR are signature blocks attached to a previous email
-  // Filter out document sections (numbered clauses, "Texto original:", etc.)
+  // Limit to 12000 chars — enough for long threads
+  const fullContent = body.slice(0, 12000);
 
-  function isEmailSegment(seg, index){
-    if(index===0) return true; // always keep first
-    const s=seg.trim();
-    // Starts with email header fields
-    if(/^(De:|From:|Para:|To:|Enviado:|Sent:|Date:|Fecha:)/i.test(s)) return true;
-    // Signature block after an email (has contact info pattern)
-    if(/\+\d{2}\s?\d/.test(s) && index>0) return true;
-    return false;
-  }
-
-  // Also merge consecutive email segments where header got split from body
-  const cleaned=[];
-  for(let i=0;i<threadSegs.length;i++){
-    const seg=threadSegs[i];
-    if(!isEmailSegment(seg,i)) continue;
-    // If this is a very short header-only segment (<300 chars), merge with next valid segment
-    const isHeaderOnly=/^(De:|From:)/i.test(seg.trim()) && seg.length<300;
-    if(isHeaderOnly){
-      // find next segment
-      let next='';
-      for(let j=i+1;j<threadSegs.length;j++){
-        if(threadSegs[j].trim().length>20){ next=threadSegs[j]; i=j; break; }
-      }
-      cleaned.push(next ? seg+'\n\n'+next : seg);
-    } else {
-      cleaned.push(seg);
-    }
-  }
-  threadSegs = cleaned.length>0 ? cleaned : threadSegs;
-
-  const body=threadSegs[0].slice(0,1200);
-  // Store full thread up to 15000 chars
-  const fullContent=threadSegs.map((s,i)=>i===0?s:'\n%%REPLY%%\n'+s).join('\n').slice(0,15000);
-
-  return{subject,from,to,date:dateStr,body,thread:threadSegs,fullContent};
+  return {subject, from, to, date:dateStr, body:body.slice(0,1000), fullContent};
 }
 
 function dzDrag(e,id,over){e.preventDefault();document.getElementById(id)?.classList.toggle('over',over);}
@@ -1318,7 +1233,7 @@ function readEml(file,which){
       document.getElementById('eml-new-fname').textContent=file.name;
       document.getElementById('eml-new-info').textContent=t('from_lbl')+': '+(parsed.from||'—')+' · '+(parsed.date||'');
       document.getElementById('eml-new-preview').style.display='block';
-      document.getElementById('eml-new-prev-txt').textContent='De: '+(parsed.from||'—')+'\nPara: '+(parsed.to||'—')+'\nAssunto: '+(parsed.subject||'—')+'\nData: '+(parsed.date||'—')+'\n\n'+parsed.body.slice(0,300);
+      document.getElementById('eml-new-prev-txt').textContent='De: '+(parsed.from||'—')+'\nPara: '+(parsed.to||'—')+'\nAssunto: '+(parsed.subject||'—')+'\nData: '+(parsed.date||'—');
       if(parsed.subject)document.getElementById('f-name').value=parsed.subject.replace(/^(re:|fw:|fwd:)\s*/i,'').trim();
       if(parsed.to)document.getElementById('f-am').value=parsed.to;
       const lc=(parsed.subject+parsed.body).toLowerCase();
@@ -1332,7 +1247,7 @@ function readEml(file,which){
       document.getElementById('eml-entry-loaded').style.display='flex';
       document.getElementById('eml-entry-fname').textContent=file.name;
       document.getElementById('eml-entry-preview').style.display='block';
-      document.getElementById('eml-entry-prev').textContent='De: '+(parsed.from||'—')+'\nAssunto: '+(parsed.subject||'—')+'\n\n'+parsed.body.slice(0,300);
+      document.getElementById('eml-entry-prev').textContent='De: '+(parsed.from||'—')+'\nAssunto: '+(parsed.subject||'—');
     }
   };
   reader.readAsText(file,'utf-8');
