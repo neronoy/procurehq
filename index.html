@@ -876,8 +876,11 @@ function openEmailPanel(entry, tlId){
 
   const epBody=document.getElementById('ep-body');
   // Extract thread segments for display
+  // Content stored with %%REPLY%% separators from parseEml
   const storedContent=parsed.body||entry.content||'';
-  const threadSegs=extractThread(storedContent);
+  const threadSegs=storedContent.includes('%%REPLY%%')
+    ? storedContent.split('%%REPLY%%').map(s=>s.trim()).filter(s=>s.length>5)
+    : extractThread(storedContent);
   const threadHtml=threadSegs.length>1
     ? threadSegs.map((seg,i)=>{
         const isReply=i>0;
@@ -1099,18 +1102,17 @@ async function saveResp(){
 
 // ── EML ───────────────────────────────────────────────────────
 function parseEml(text){
-  // ── Parse headers ──────────────────────────────────────────
+
   function parseHeaders(block){
     const hdrs={};
     const lines=block.split(/\r?\n/);
     let i=0;
     while(i<lines.length){
       const l=lines[i];
-      if(l.trim()===''){break;}
+      if(l.trim()==='')break;
       const m=l.match(/^([\w\-]+):\s*(.*)$/);
       if(m){
-        let key=m[1].toLowerCase(), val=m[2];
-        // fold continuation lines
+        let key=m[1].toLowerCase(),val=m[2];
         while(i+1<lines.length&&/^[ \t]/.test(lines[i+1])){i++;val+=' '+lines[i].trim();}
         hdrs[key]=val.trim();
       }
@@ -1119,181 +1121,149 @@ function parseEml(text){
     return hdrs;
   }
 
-  // ── Decode RFC2047 encoded words (=?charset?B/Q?...?=) ────
   function decodeRfc2047(str){
-    return str.replace(/=\?([^?]+)\?([bBqQ])\?([^?]*)\?=/g,(_,charset,enc,data)=>{
+    return (str||'').replace(/=\?([^?]+)\?([bBqQ])\?([^?]*)\?=/g,(_,charset,enc,data)=>{
       try{
         if(enc.toUpperCase()==='B'){
           const bytes=atob(data.replace(/-/g,'+').replace(/_/g,'/'));
           if(charset.toLowerCase().startsWith('utf'))return decodeURIComponent(bytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));
           return bytes;
-        }else{
-          return data.replace(/_/g,' ').replace(/=([0-9A-Fa-f]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
         }
+        return data.replace(/_/g,' ').replace(/=([0-9A-Fa-f]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
       }catch{return data;}
     });
   }
 
-  // ── Decode quoted-printable ────────────────────────────────
   function decodeQP(str){
     return str.replace(/=\r?\n/g,'').replace(/=([0-9A-Fa-f]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
   }
 
-  // ── Decode base64 body safely (handles utf-8) ─────────────
-  function decodeBase64Body(str){
+  function decodeB64(str){
     try{
       const clean=str.replace(/\s+/g,'');
       const bytes=atob(clean);
-      // try utf-8 decode
-      try{
-        return decodeURIComponent(bytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));
-      }catch{return bytes;}
+      try{return decodeURIComponent(bytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));}
+      catch{return bytes;}
     }catch{return str;}
   }
 
-  // ── Strip HTML tags ────────────────────────────────────────
+  // Extract thread segments FROM HTML before stripping tags
+  // Outlook uses <div style="border-top:..."> or <hr> to separate replies
+  function extractThreadFromHtml(html){
+    // Normalize Outlook reply dividers to a placeholder
+    let normalized = html
+      // Outlook "From:" block inside a div/p — typical reply header
+      .replace(/<div[^>]*>\s*<b>From:<\/b>/gi, '%%SPLIT%%<div><b>From:</b>')
+      .replace(/<div[^>]*>\s*<b>De:<\/b>/gi, '%%SPLIT%%<div><b>De:</b>')
+      .replace(/<div[^>]*>\s*<b>De:\s*<\/b>/gi, '%%SPLIT%%<div><b>De: </b>')
+      // <hr> separators
+      .replace(/<hr[^>]*>/gi, '%%SPLIT%%')
+      // Outlook border-top div separators
+      .replace(/<div[^>]*border-top[^>]*>/gi, '%%SPLIT%%<div>')
+      // blockquote = older reply
+      .replace(/<blockquote[^>]*>/gi, '%%SPLIT%%<blockquote>')
+      .replace(/<\/blockquote>/gi, '<\/blockquote>%%SPLIT%%');
+
+    // Split and process each segment
+    const rawSegs = normalized.split('%%SPLIT%%');
+    const segments = [];
+    for(const seg of rawSegs){
+      const stripped = stripHtml(seg);
+      if(stripped.trim().length > 15) segments.push(stripped.trim());
+    }
+    return segments.length > 0 ? segments : null;
+  }
+
   function stripHtml(str){
     return str
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'')
       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'')
       .replace(/<br\s*\/?>/gi,'\n')
-      .replace(/<\/p>/gi,'\n')
-      .replace(/<\/div>/gi,'\n')
+      .replace(/<\/p>/gi,'\n').replace(/<\/div>/gi,'\n').replace(/<\/li>/gi,'\n')
       .replace(/<[^>]+>/g,'')
-      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"')
-      .replace(/\r\n|\r/g,'\n')
-      .replace(/\n{3,}/g,'\n\n')
-      .trim();
+      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")
+      .replace(/\r\n|\r/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
   }
 
-  // ── Extract best text part from multipart ─────────────────
-  function extractPart(rawBody, contentType, encoding){
-    const ct=(contentType||'').toLowerCase();
-    const enc=(encoding||'').toLowerCase();
+  function extractPart(rawBody,ct,enc){
     let decoded=rawBody;
-    if(enc==='base64') decoded=decodeBase64Body(rawBody);
+    if(enc==='base64') decoded=decodeB64(rawBody);
     else if(enc==='quoted-printable') decoded=decodeQP(rawBody);
-    if(ct.includes('text/html')) decoded=stripHtml(decoded);
-    return decoded.trim();
+    return decoded;
   }
 
-  // ── Parse a MIME part (headers + body) ────────────────────
   function parsePart(raw){
     const sep=raw.search(/\r?\n\r?\n/);
     if(sep===-1)return{headers:{},body:raw};
-    const hdrBlock=raw.slice(0,sep);
-    const body=raw.slice(sep).replace(/^\r?\n/,'');
-    return{headers:parseHeaders(hdrBlock),body};
+    return{headers:parseHeaders(raw.slice(0,sep)),body:raw.slice(sep).replace(/^\r?\n/,'')};
   }
 
-  // ── Main parse ────────────────────────────────────────────
+  // ── Recursively find all text parts ──────────────────────────
+  function findParts(rawBody, ct){
+    const result={plain:'',html:''};
+    const bm=(ct||'').match(/boundary="?([^";\r\n]+)"?/i);
+    if(!bm) return result;
+    const boundary='--'+bm[1].trim();
+    const parts=rawBody.split(new RegExp(boundary+'(?:--)?(?:\r?\n|$)'));
+    for(const part of parts){
+      if(!part||!part.trim()||part.trim()==='--') continue;
+      const p=parsePart(part);
+      const pct=(p.headers['content-type']||'').toLowerCase();
+      const penc=(p.headers['content-transfer-encoding']||'').toLowerCase().trim();
+      if(pct.includes('multipart')){
+        const nested=findParts(p.body, p.headers['content-type']||'');
+        if(nested.html&&!result.html) result.html=nested.html;
+        if(nested.plain&&!result.plain) result.plain=nested.plain;
+      }else if(pct.includes('text/html')&&!result.html){
+        result.html=extractPart(p.body,pct,penc);
+      }else if(pct.includes('text/plain')&&!result.plain){
+        result.plain=extractPart(p.body,pct,penc);
+      }
+    }
+    return result;
+  }
+
+  // ── Main ──────────────────────────────────────────────────────
   const nlnl=text.search(/\r?\n\r?\n/);
   const hdrRaw=nlnl!==-1?text.slice(0,nlnl):text;
   const bodyRaw=nlnl!==-1?text.slice(nlnl).replace(/^\r?\n/,''):'';
   const headers=parseHeaders(hdrRaw);
-
   const ct=headers['content-type']||'';
-  const enc=headers['content-transfer-encoding']||'';
 
-  // Decode subject/from/to
-  let subject=decodeRfc2047(headers['subject']||'');
+  const subject=decodeRfc2047(headers['subject']||'');
   const from=decodeRfc2047((headers['from']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim());
   const to=decodeRfc2047((headers['to']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim());
-
   let dateStr='';
   try{const d=new Date(headers['date']||'');if(!isNaN(d))dateStr=d.toISOString().slice(0,10);}catch(e){}
 
-  let body='';
+  let threadSegs=null;
+  let plainText='';
 
   if(ct.includes('multipart')){
-    // Extract boundary
-    const bm=ct.match(/boundary="?([^";]+)"?/i);
-    if(bm){
-      const boundary='--'+bm[1].trim();
-      const parts=bodyRaw.split(new RegExp(boundary+'(?:--|\\r?\\n)'));
-      // Prefer text/plain, fallback to text/html
-      let plainBody='', htmlBody='';
-      for(const part of parts){
-        if(!part.trim()||part.trim()==='--')continue;
-        const p=parsePart(part);
-        const pct=(p.headers['content-type']||'').toLowerCase();
-        const penc=(p.headers['content-transfer-encoding']||'').toLowerCase();
-        if(pct.includes('multipart')){
-          // nested multipart — recurse by re-parsing
-          const nested=parseEml('Content-Type: '+p.headers['content-type']+'\r\n\r\n'+p.body);
-          if(nested.body)plainBody=nested.body;
-        }else if(pct.includes('text/plain')&&!plainBody){
-          plainBody=extractPart(p.body,pct,penc);
-        }else if(pct.includes('text/html')&&!htmlBody){
-          htmlBody=extractPart(p.body,pct,penc);
-        }
-      }
-      body=plainBody||htmlBody||'';
+    const parts=findParts(bodyRaw,ct);
+    // Try to extract thread from HTML first (has full history)
+    if(parts.html){
+      threadSegs=extractThreadFromHtml(parts.html);
+    }
+    // Fallback to plain
+    if(!threadSegs||threadSegs.length===0){
+      plainText=stripHtml(parts.plain||parts.html||'');
+      threadSegs=extractThread(plainText);
     }
   }else{
-    body=extractPart(bodyRaw,ct,enc);
+    const enc=(headers['content-transfer-encoding']||'').toLowerCase().trim();
+    const raw=extractPart(bodyRaw,ct,enc);
+    plainText=ct.includes('text/html')?stripHtml(raw):raw;
+    threadSegs=extractThread(plainText);
   }
 
-  // Normalize
-  body=body.replace(/\r\n|\r/g,'\n').replace(/\n{4,}/g,'\n\n\n').trim();
+  if(!threadSegs||threadSegs.length===0) threadSegs=[plainText||''];
 
-  // ── Extract full thread BEFORE truncating ─────────────────
-  const threadFull = extractThread(body);
+  const body=threadSegs[0].slice(0,1200);
+  // Store full thread up to 8000 chars
+  const fullContent=threadSegs.map((s,i)=>i===0?s:'\n%%REPLY%%\n'+s).join('\n').slice(0,8000);
 
-  // Store full thread content (up to 4000 chars total)
-  const fullContent = threadFull.length > 1
-    ? threadFull.map((seg,i) => i===0 ? seg : '\n%%REPLY%%\n'+seg).join('\n')
-    : body;
-
-  return{subject,from,to,date:dateStr,body:body.slice(0,1200),thread:threadFull,fullContent:fullContent.slice(0,4000)};
-}
-
-function extractThread(body){
-  if(!body||body.trim().length<20) return [body||''];
-
-  // Normalize common inline separators to newlines first
-  let normalized = body
-    .replace(/(-{3,}\s*(?:mensagem original|original message|mensaje original)\s*-{3,})/gi, '\n$1\n')
-    .replace(/(_{5,})/g, '\n$1\n')
-    .replace(/\n(De:|From:|Para:|To:)/g, '\n\n$1')
-    .replace(/\n(Em\s.+escreveu:)/gi, '\n\n$1')
-    .replace(/\n(On\s.+wrote:)/gi, '\n\n$1')
-    .replace(/\n(El\s.+escribió:)/gi, '\n\n$1');
-
-  // Patterns that mark start of a quoted reply
-  const separators=[
-    /-{3,}\s*(?:mensagem original|original message|mensaje original)\s*-{3,}/i,
-    /_{5,}/,
-    /^\s*De:\s*.+\n\s*(?:Para|Enviado|Assunto):/im,
-    /^\s*From:\s*.+\n\s*(?:To|Sent|Subject):/im,
-    /^\s*Em\s.+escreveu:/im,
-    /^\s*On\s.+wrote:/im,
-    /^\s*El\s.+escribió:/im,
-    /^>{2,}/m,
-  ];
-
-  const segments=[];
-  let remaining=normalized;
-  let safety=0;
-
-  while(remaining.trim().length>15 && safety<15){
-    safety++;
-    let splitAt=remaining.length;
-    let sepLen=1;
-    for(const sep of separators){
-      const m=remaining.match(sep);
-      if(m && m.index !== undefined && m.index < splitAt){
-        splitAt=m.index;
-        sepLen=m[0].length;
-      }
-    }
-    const part=remaining.slice(0,splitAt).trim();
-    if(part.length>10) segments.push(part);
-    if(splitAt===remaining.length) break;
-    remaining=remaining.slice(splitAt+sepLen).trim();
-  }
-
-  return segments.length>0 ? segments : [body];
+  return{subject,from,to,date:dateStr,body,thread:threadSegs,fullContent};
 }
 
 function dzDrag(e,id,over){e.preventDefault();document.getElementById(id)?.classList.toggle('over',over);}
