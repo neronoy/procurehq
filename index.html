@@ -738,7 +738,7 @@ function renderDetailView(proj){
   renderBanner(proj);
   const tl=TLABELS();
   const info=[
-    {l:t('am_label'),v:proj.client||'—'},{l:t('client_label'),v:proj.client||'—'},
+    {l:t('am_label'),v:proj.am||'—'},{l:t('client_label'),v:proj.client||'—'},
     {l:t('vendor_label'),v:proj.vendor||'—'},{l:t('type_label'),v:tl[proj.type]||proj.type},
     {l:t('deadline_label'),v:proj.deadline||'—'},{l:t('created_on'),v:proj.created_at?.slice(0,10)||'—'},
   ].map(x=>`<div class="icard"><div class="ilbl">${x.l}</div><div class="ival">${esc(x.v)}</div></div>`).join('');
@@ -923,6 +923,7 @@ async function saveEditProject(){
   const updates={
     name,
     type:document.getElementById('e-type').value,
+    am:document.getElementById('e-am').value.trim()||null,
     client:document.getElementById('e-client').value.trim()||null,
     vendor:document.getElementById('e-vendor').value.trim()||null,
     deadline:document.getElementById('e-deadline').value||null,
@@ -957,9 +958,9 @@ async function saveProject(){
   if(!name){alert(t('name_lbl')+'!');return;}
   const respName=document.getElementById('f-resp-name').value.trim()||RLABELS()[resp1];
   const now=new Date().toISOString();
-  const proj={name,type:document.getElementById('f-type').value,status:document.getElementById('f-status').value,client:document.getElementById('f-client').value.trim()||null,vendor:document.getElementById('f-vendor').value.trim()||null,deadline:document.getElementById('f-deadline').value||null,description:document.getElementById('f-desc').value.trim()||null,resp_type:resp1,resp_name:respName,resp_since:now,created_by:currentUser.id};
+  const proj={name,type:document.getElementById('f-type').value,status:document.getElementById('f-status').value,am:document.getElementById('f-am').value.trim()||null,client:document.getElementById('f-client').value.trim()||null,vendor:document.getElementById('f-vendor').value.trim()||null,deadline:document.getElementById('f-deadline').value||null,description:document.getElementById('f-desc').value.trim()||null,resp_type:resp1,resp_name:respName,resp_since:now,created_by:currentUser.id};
   const{data,error}=await sb.from('projects').insert(proj).select().single();
-  if(error){alert(error.message);return;}
+  if(error){console.error('saveProject error:',error);alert('Erro ao criar projeto: '+error.message);return;}
   await sb.from('timeline_entries').insert({project_id:data.id,entry_type:'resp',label:t('created_proj'),content:t('created_proj')+' '+data.project_ref+'. '+t('pending_in')+': '+RLABELS()[resp1]+(respName!==RLABELS()[resp1]?' ('+respName+')':'')+'.',created_by:currentUser.id});
   if(emlData.new){
     const d=emlData.new;
