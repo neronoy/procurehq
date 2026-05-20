@@ -22,8 +22,8 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:var(--text);background:var(--bg3);height:100vh;overflow:hidden}
 #app{display:flex;height:100vh}
 
-/* sidebar */
-.sb{width:224px;min-width:224px;background:var(--bg2);border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+/* SIDEBAR NAV */
+.sb{width:224px;min-width:224px;background:var(--bg2);border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;z-index:10}
 .sb-logo{padding:15px 16px;font-size:15px;font-weight:700;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:9px}
 .logo-dot{width:24px;height:24px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800}
 .sb-sec{padding:10px 14px 3px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
@@ -47,8 +47,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .logout-btn{width:100%;padding:5px;border:.5px solid var(--border2);border-radius:var(--r);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);font-family:inherit}
 .logout-btn:hover{background:var(--bg3)}
 
-/* main */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+/* MAIN AREA — wraps topbar + content + email panel */
+.main-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.main{flex:1;display:flex;overflow:hidden}
+.content-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 .topbar{height:52px;border-bottom:.5px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0}
 .topbar-title{font-size:15px;font-weight:700;flex:1}
 .srch{display:flex;align-items:center;gap:6px;background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:5px 10px;width:240px}
@@ -56,21 +58,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .content{flex:1;overflow-y:auto;padding:20px}
 .view{display:none}.view.active{display:block}
 
-/* buttons */
+/* EMAIL SIDE PANEL */
+.email-panel{width:0;min-width:0;border-left:.5px solid var(--border);background:var(--bg);display:flex;flex-direction:column;overflow:hidden;transition:width .2s ease,min-width .2s ease;flex-shrink:0}
+.email-panel.open{width:400px;min-width:340px}
+.ep-header{padding:14px 16px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ep-title{font-size:13px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ep-body{flex:1;overflow-y:auto;padding:16px}
+.ep-field{margin-bottom:12px}
+.ep-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:3px}
+.ep-value{font-size:13px;color:var(--text);word-break:break-word}
+.ep-divider{height:.5px;background:var(--border);margin:14px 0}
+.ep-body-text{font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word;color:var(--text)}
+.ep-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:var(--blue-bg);color:var(--blue-dk);margin-top:4px}
+
+/* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border:.5px solid var(--border2);border-radius:var(--r);background:transparent;cursor:pointer;font-size:13px;color:var(--text);font-family:inherit;transition:background .1s}
 .btn:hover{background:var(--bg2)}
 .btn-p{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}
 .btn-p:hover{background:var(--green-md)}
 .btn-sm{padding:4px 10px;font-size:12px}
+.btn-ghost{border-color:transparent;color:var(--text2)}
+.btn-ghost:hover{background:var(--bg2);border-color:var(--border)}
 
-/* stats */
+/* STATS */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .stat{background:var(--bg2);border-radius:var(--r);padding:12px 14px;cursor:pointer;border:.5px solid transparent;transition:border .1s}
 .stat:hover{border-color:var(--border2)}
 .stat-lbl{font-size:11px;color:var(--text2);margin-bottom:4px}
 .stat-val{font-size:22px;font-weight:700}
 
-/* table */
+/* TABLE */
 .tcard{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-top:4px}
 .th,.tr{display:grid;grid-template-columns:108px 1fr 130px 152px 92px 74px;gap:8px;padding:10px 14px;align-items:center}
 .th{background:var(--bg2);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:700;border-bottom:.5px solid var(--border)}
@@ -80,7 +97,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .pid{font-family:'SF Mono',ui-monospace,monospace;font-size:11px;color:var(--text2);font-weight:600}
 .trunc{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* badges */
+/* BADGES */
 .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
 .b-open{background:var(--green-bg);color:var(--green-dk)}
 .b-pending{background:var(--amber-bg);color:var(--amber)}
@@ -92,13 +109,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .rp-vendor{background:var(--blue-bg);color:var(--blue-dk);border-color:#85B7EB}
 .rp-blocked{background:var(--red-bg);color:#791F1F;border-color:#F09595}
 
-/* filters */
+/* FILTERS */
 .frow{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .chip{padding:4px 12px;border-radius:20px;border:.5px solid var(--border2);font-size:12px;cursor:pointer;background:transparent;color:var(--text2);font-family:inherit}
 .chip:hover{background:var(--bg2)}
 .chip.active{background:var(--green);color:#fff;border-color:var(--green)}
 
-/* detail */
+/* DETAIL */
 .det-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .det-id{font-family:'SF Mono',ui-monospace,monospace;font-size:12px;color:var(--green-dk);background:var(--green-bg);padding:3px 10px;border-radius:20px}
 .det-title{font-size:17px;font-weight:700;flex:1;min-width:180px}
@@ -109,13 +126,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .ilbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;font-weight:700}
 .ival{font-size:13px;font-weight:600}
 
-/* tabs */
+/* TABS */
 .tabs{display:flex;border-bottom:.5px solid var(--border);margin-bottom:16px}
 .tab{padding:8px 16px;font-size:13px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-.5px;user-select:none}
 .tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600}
 .tab:hover:not(.active){color:var(--text)}
 
-/* timeline */
+/* TIMELINE */
 .tl-item{display:flex;gap:12px;padding-bottom:16px;position:relative}
 .tl-item::before{content:'';position:absolute;left:14px;top:30px;bottom:0;width:1px;background:var(--border)}
 .tl-item:last-child::before{display:none}
@@ -129,9 +146,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .tl-meta{font-size:11px;color:var(--text3);margin-bottom:3px}
 .tl-txt{font-size:13px;background:var(--bg2);padding:8px 12px;border-radius:var(--r);border:.5px solid var(--border);white-space:pre-wrap;word-break:break-word}
 .tl-resp{font-size:13px;background:var(--red-bg);border:.5px solid #F7C1C1;padding:8px 12px;border-radius:var(--r);color:#791F1F;white-space:pre-wrap}
+/* Email entries clickable */
+.tl-email-entry{cursor:pointer;transition:border-color .1s,background .1s}
+.tl-email-entry:hover{background:var(--blue-bg) !important;border-color:#85B7EB !important}
+.tl-email-entry.active{background:var(--blue-bg) !important;border-color:var(--blue) !important}
+.email-open-hint{font-size:11px;color:var(--blue);margin-top:4px;display:flex;align-items:center;gap:4px}
+
 .entry-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 
-/* modal */
+/* MODAL */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;z-index:200}
 .ov.open{display:flex}
 .modal{background:var(--bg);border-radius:var(--rl);border:.5px solid var(--border);width:700px;max-width:96vw;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column}
@@ -141,7 +164,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .mbody{padding:20px;display:flex;flex-direction:column;gap:14px}
 .mftr{padding:14px 20px;border-top:.5px solid var(--border);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--bg)}
 
-/* forms */
+/* FORMS */
 .fg{display:flex;flex-direction:column;gap:4px}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
@@ -152,7 +175,7 @@ textarea{resize:vertical;min-height:70px}
 .divider{height:.5px;background:var(--border);margin:2px 0}
 .id-box{font-family:'SF Mono',ui-monospace,monospace;font-size:17px;font-weight:700;color:var(--green);background:var(--green-bg);padding:6px 14px;border-radius:var(--r);display:inline-block;letter-spacing:.05em}
 
-/* eml */
+/* EML */
 .eml-zone{border:.5px dashed var(--border2);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;background:var(--bg2);position:relative;transition:all .15s}
 .eml-zone:hover,.eml-zone.over{border-color:var(--green);background:#E1F5EE20}
 .eml-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -160,7 +183,7 @@ textarea{resize:vertical;min-height:70px}
 .eml-fname{font-size:13px;font-weight:600;color:var(--green-dk);flex:1}
 .eml-preview{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:10px;font-size:11px;font-family:'SF Mono',ui-monospace,monospace;max-height:110px;overflow-y:auto;white-space:pre-wrap;color:var(--text2)}
 
-/* resp type grid */
+/* RESP TYPE GRID */
 .rtg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
 .rtb{padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--r);cursor:pointer;font-size:12px;text-align:left;background:transparent;color:var(--text);display:flex;align-items:center;gap:6px;font-family:inherit;transition:all .1s}
 .rtb:hover{background:var(--bg2)}
@@ -170,27 +193,21 @@ textarea{resize:vertical;min-height:70px}
 .rtb.sel-vendor{background:var(--blue-bg);border-color:var(--blue);color:var(--blue-dk);border-width:1.5px}
 .rtb.sel-blocked{background:var(--red-bg);border-color:#E24B4A;color:#791F1F;border-width:1.5px}
 
-/* hw card */
+/* HW CARD */
 .hw-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px}
 
-/* auth */
+/* AUTH */
 #auth-screen{display:flex;align-items:center;justify-content:center;height:100vh;background:var(--bg3)}
 .auth-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:32px;width:380px;display:flex;flex-direction:column;gap:14px}
 .auth-err{font-size:12px;color:var(--red);background:var(--red-bg);padding:8px 12px;border-radius:var(--r)}
 .auth-sw{font-size:12px;color:var(--text2);text-align:center;cursor:pointer;margin-top:2px}
-.auth-sw span{color:var(--green);font-weight:600}
 
-/* members */
-.mem-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:.5px solid var(--border)}
-.mem-row:last-child{border-bottom:none}
-.avatar{width:30px;height:30px;border-radius:50%;background:var(--purple-bg);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-
-/* loading */
+/* LOADING */
 #loading-screen{display:flex;align-items:center;justify-content:center;height:100vh;gap:10px;color:var(--text2);font-size:14px}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
 .sec-hdr{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.empty{padding:20px;font-size:13px;color:var(--text3);text-align:center}
+.empty{padding:24px;font-size:13px;color:var(--text3);text-align:center}
 </style>
 </head>
 <body>
@@ -209,18 +226,12 @@ textarea{resize:vertical;min-height:70px}
       <label id="lbl-name">Nome completo</label>
       <input type="text" id="auth-name"/>
     </div>
-    <div class="fg">
-      <label id="lbl-email">Email</label>
-      <input type="email" id="auth-email"/>
-    </div>
-    <div class="fg">
-      <label id="lbl-pass">Password</label>
-      <input type="password" id="auth-pass"/>
-    </div>
-    <button class="btn btn-p" id="auth-btn" onclick="authSubmit()" style="justify-content:center" id="auth-submit">Entrar</button>
-    <div class="auth-sw" id="auth-sw" onclick="toggleAuth()">Não tens conta? <span id="auth-sw-span">Criar conta</span></div>
-    <div style="margin-top:8px">
-      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:6px" id="lbl-lang-auth">Idioma</div>
+    <div class="fg"><label id="lbl-email">Email</label><input type="email" id="auth-email"/></div>
+    <div class="fg"><label id="lbl-pass">Password</label><input type="password" id="auth-pass" onkeydown="if(event.key==='Enter')authSubmit()"/></div>
+    <button class="btn btn-p" onclick="authSubmit()" style="justify-content:center" id="auth-btn">Entrar</button>
+    <div class="auth-sw" id="auth-sw" onclick="toggleAuth()">Não tens conta? <span style="color:var(--green);font-weight:600" id="auth-sw-span">Criar conta</span></div>
+    <div style="margin-top:4px">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:6px">Idioma</div>
       <div class="lang-row">
         <button class="lang-btn active" id="auth-lang-pt" onclick="setLangAuth('pt')">PT</button>
         <button class="lang-btn" id="auth-lang-en" onclick="setLangAuth('en')">EN</button>
@@ -233,35 +244,20 @@ textarea{resize:vertical;min-height:70px}
 <div id="app" style="display:none">
   <div class="sb">
     <div class="sb-logo"><div class="logo-dot">P</div> ProcureHQ</div>
-    <div class="sb-sec" id="sb-menu">Menu</div>
+    <div class="sb-sec" data-i="sb_menu">Menu</div>
     <div class="ni active" id="nav-dashboard" onclick="showView('dashboard')">
-      <span class="ni-ic">⊞</span> <span data-i="dashboard">Dashboard</span>
+      <span class="ni-ic">⊞</span><span data-i="dashboard">Dashboard</span>
     </div>
     <div class="ni" id="nav-projects" onclick="showView('projects')">
-      <span class="ni-ic">◫</span> <span data-i="projects">Projetos</span>
+      <span class="ni-ic">◫</span><span data-i="projects">Projetos</span>
       <span class="nb nb-bl" id="badge-total">0</span>
     </div>
     <div class="sb-sec" data-i="pending_in">Pendente em</div>
-    <div class="ni" onclick="filterBy('resp','internal')">
-      <span class="ni-ic">🏢</span> <span data-i="resp_internal">Interno</span>
-      <span class="nb nb-pu" id="cnt-internal">0</span>
-    </div>
-    <div class="ni" onclick="filterBy('resp','am')">
-      <span class="ni-ic">👤</span> <span data-i="resp_am">Area Manager</span>
-      <span class="nb nb-gr" id="cnt-am">0</span>
-    </div>
-    <div class="ni" onclick="filterBy('resp','client')">
-      <span class="ni-ic">🏪</span> <span data-i="resp_client">Cliente</span>
-      <span class="nb nb-am" id="cnt-client">0</span>
-    </div>
-    <div class="ni" onclick="filterBy('resp','vendor')">
-      <span class="ni-ic">🚚</span> <span data-i="resp_vendor">Fornecedor</span>
-      <span class="nb nb-bl" id="cnt-vendor">0</span>
-    </div>
-    <div class="ni" onclick="filterBy('resp','blocked')">
-      <span class="ni-ic">⛔</span> <span data-i="resp_blocked">Bloqueado</span>
-      <span class="nb nb-re" id="cnt-blocked">0</span>
-    </div>
+    <div class="ni" onclick="filterBy('resp','internal')"><span class="ni-ic">🏢</span><span data-i="resp_internal">Interno</span><span class="nb nb-pu" id="cnt-internal">0</span></div>
+    <div class="ni" onclick="filterBy('resp','am')"><span class="ni-ic">👤</span><span data-i="resp_am">Area Manager</span><span class="nb nb-gr" id="cnt-am">0</span></div>
+    <div class="ni" onclick="filterBy('resp','client')"><span class="ni-ic">🏪</span><span data-i="resp_client">Cliente</span><span class="nb nb-am" id="cnt-client">0</span></div>
+    <div class="ni" onclick="filterBy('resp','vendor')"><span class="ni-ic">🚚</span><span data-i="resp_vendor">Fornecedor</span><span class="nb nb-bl" id="cnt-vendor">0</span></div>
+    <div class="ni" onclick="filterBy('resp','blocked')"><span class="ni-ic">⛔</span><span data-i="resp_blocked">Bloqueado</span><span class="nb nb-re" id="cnt-blocked">0</span></div>
     <div class="user-bar">
       <div class="user-name" id="sb-username">—</div>
       <div class="user-role" id="sb-userrole">—</div>
@@ -275,108 +271,94 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </div>
 
-  <div class="main">
+  <div class="main-wrap">
     <div class="topbar">
       <div class="topbar-title" id="topbar-title">Dashboard</div>
-      <div class="srch">
-        <span style="color:var(--text3);font-size:13px">⌕</span>
-        <input type="text" id="search-input" oninput="onSearch(this.value)"/>
-      </div>
-      <button class="btn btn-p" onclick="openNewProject()" id="btn-new-proj">+ Novo projeto</button>
+      <div class="srch"><span style="color:var(--text3);font-size:13px">⌕</span><input type="text" id="search-input" oninput="onSearch(this.value)"/></div>
+      <button class="btn btn-p" onclick="openNewProject()">+ <span data-i="new_project">Novo projeto</span></button>
     </div>
+    <div class="main">
+      <div class="content-area">
+        <div class="content">
 
-    <div class="content">
-
-      <!-- DASHBOARD -->
-      <div class="view active" id="view-dashboard">
-        <div class="stats">
-          <div class="stat" onclick="showView('projects')">
-            <div class="stat-lbl" data-i="total_projects">Total projetos</div>
-            <div class="stat-val" id="stat-total">—</div>
-          </div>
-          <div class="stat" onclick="filterBy('resp','internal')">
-            <div class="stat-lbl" data-i="pending_internal">Pendente interno</div>
-            <div class="stat-val" style="color:var(--purple)" id="stat-internal">—</div>
-          </div>
-          <div class="stat" onclick="filterBy('resp','blocked')">
-            <div class="stat-lbl" data-i="blocked">Bloqueados</div>
-            <div class="stat-val" style="color:var(--red)" id="stat-blocked">—</div>
-          </div>
-          <div class="stat" onclick="filterBy('resp','vendor')">
-            <div class="stat-lbl" data-i="awaits_vendor">Aguarda fornecedor</div>
-            <div class="stat-val" style="color:var(--amber)" id="stat-vendor">—</div>
-          </div>
-        </div>
-        <div class="sec-hdr">⏱ <span data-i="recent_projects">Projetos recentes</span></div>
-        <div class="tcard">
-          <div class="th">
-            <span>ID</span><span data-i="col_project">Projeto</span><span data-i="col_am">Area Manager</span>
-            <span data-i="col_pending">Pendente em</span><span data-i="col_status">Estado</span><span data-i="col_date">Data</span>
-          </div>
-          <div id="recent-list"></div>
-        </div>
-      </div>
-
-      <!-- PROJECTS -->
-      <div class="view" id="view-projects">
-        <div class="frow" id="filter-chips"></div>
-        <div class="tcard">
-          <div class="th">
-            <span>ID</span><span data-i="col_project">Projeto</span><span data-i="col_am">Area Manager</span>
-            <span data-i="col_pending">Pendente em</span><span data-i="col_status">Estado</span><span data-i="col_date">Data</span>
-          </div>
-          <div id="projects-list"></div>
-        </div>
-      </div>
-
-      <!-- DETAIL -->
-      <div class="view" id="view-detail">
-        <div style="margin-bottom:12px">
-          <button class="btn btn-sm" onclick="showView('projects')">← <span data-i="back">Voltar</span></button>
-        </div>
-        <div class="det-hdr">
-          <span class="det-id" id="det-id"></span>
-          <div class="det-title" id="det-title"></div>
-          <span id="det-badge" class="badge"></span>
-          <button class="btn btn-sm" onclick="copyId()">⧉ <span data-i="copy_id">Copiar ID</span></button>
-          <button class="btn btn-sm" onclick="openEditStatus()" id="btn-edit-status">✎ <span data-i="edit_status">Estado</span></button>
-        </div>
-        <div class="resp-banner" id="resp-banner">
-          <div style="flex:1">
-            <div class="resp-lbl" data-i="pending_in">Pendente em</div>
-            <div style="margin-top:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <span id="resp-pill"></span>
-              <span id="resp-specific" style="font-size:13px;color:var(--text2)"></span>
-              <span id="resp-since" style="font-size:11px;color:var(--text3)"></span>
+          <!-- DASHBOARD -->
+          <div class="view active" id="view-dashboard">
+            <div class="stats">
+              <div class="stat" onclick="showView('projects')"><div class="stat-lbl" data-i="total_projects">Total projetos</div><div class="stat-val" id="stat-total">—</div></div>
+              <div class="stat" onclick="filterBy('resp','internal')"><div class="stat-lbl" data-i="pending_internal">Pendente interno</div><div class="stat-val" style="color:var(--purple)" id="stat-internal">—</div></div>
+              <div class="stat" onclick="filterBy('resp','blocked')"><div class="stat-lbl" data-i="blocked">Bloqueados</div><div class="stat-val" style="color:var(--red)" id="stat-blocked">—</div></div>
+              <div class="stat" onclick="filterBy('resp','vendor')"><div class="stat-lbl" data-i="awaits_vendor">Aguarda fornecedor</div><div class="stat-val" style="color:var(--amber)" id="stat-vendor">—</div></div>
+            </div>
+            <div class="sec-hdr">⏱ <span data-i="recent_projects">Projetos recentes</span></div>
+            <div class="tcard">
+              <div class="th"><span>ID</span><span data-i="col_project">Projeto</span><span data-i="col_am">Area Manager</span><span data-i="col_pending">Pendente em</span><span data-i="col_status">Estado</span><span data-i="col_date">Data</span></div>
+              <div id="recent-list"></div>
             </div>
           </div>
-          <button class="btn btn-sm" onclick="openRespModal()">⇄ <span data-i="change_resp">Alterar</span></button>
-        </div>
-        <div class="igrid" id="det-info-grid"></div>
-        <div class="tabs" id="det-tabs">
-          <div class="tab active" onclick="showTab('timeline',this)" data-i="tab_timeline">Cronologia</div>
-          <div class="tab" onclick="showTab('hw',this)" data-i="tab_hw">Alterações HW</div>
-          <div class="tab" onclick="showTab('members',this)" data-i="tab_members">Membros</div>
-          <div class="tab" onclick="showTab('info',this)" data-i="tab_info">Detalhes</div>
-        </div>
-        <div id="tab-timeline">
-          <div class="entry-bar">
-            <button class="btn btn-sm" onclick="addEntry('email')">✉ <span data-i="add_email">Email</span></button>
-            <button class="btn btn-sm" onclick="addEntry('eml')">⤵ <span data-i="import_eml">Importar .eml</span></button>
-            <button class="btn btn-sm" onclick="addEntry('file')">📎 <span data-i="add_file">Ficheiro</span></button>
-            <button class="btn btn-sm" onclick="addEntry('note')">📝 <span data-i="add_note">Nota</span></button>
-            <button class="btn btn-sm" onclick="addEntry('hw')">🖥 <span data-i="add_hw">Alteração HW</span></button>
+
+          <!-- PROJECTS -->
+          <div class="view" id="view-projects">
+            <div class="frow" id="filter-chips"></div>
+            <div class="tcard">
+              <div class="th"><span>ID</span><span data-i="col_project">Projeto</span><span data-i="col_am">Area Manager</span><span data-i="col_pending">Pendente em</span><span data-i="col_status">Estado</span><span data-i="col_date">Data</span></div>
+              <div id="projects-list"></div>
+            </div>
           </div>
-          <div id="timeline-list"></div>
-        </div>
-        <div id="tab-hw" style="display:none"><div id="hw-list"></div></div>
-        <div id="tab-members" style="display:none">
-          <div style="margin-bottom:12px">
-            <button class="btn btn-sm" onclick="openAddMember()">+ <span data-i="add_member">Adicionar membro</span></button>
+
+          <!-- DETAIL -->
+          <div class="view" id="view-detail">
+            <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center">
+              <button class="btn btn-sm" onclick="showView('projects')">← <span data-i="back">Voltar</span></button>
+            </div>
+            <div class="det-hdr">
+              <span class="det-id" id="det-id"></span>
+              <div class="det-title" id="det-title"></div>
+              <span id="det-badge" class="badge"></span>
+              <button class="btn btn-sm" onclick="openEditProject()">✎ <span data-i="edit">Editar</span></button>
+              <button class="btn btn-sm" onclick="copyId()">⧉ <span data-i="copy_id">Copiar ID</span></button>
+            </div>
+            <div class="resp-banner" id="resp-banner">
+              <div style="flex:1">
+                <div class="resp-lbl" data-i="pending_in">Pendente em</div>
+                <div style="margin-top:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <span id="resp-pill"></span>
+                  <span id="resp-specific" style="font-size:13px;color:var(--text2)"></span>
+                  <span id="resp-since" style="font-size:11px;color:var(--text3)"></span>
+                </div>
+              </div>
+              <button class="btn btn-sm" onclick="openRespModal()">⇄ <span data-i="change_resp">Alterar</span></button>
+            </div>
+            <div class="igrid" id="det-info-grid"></div>
+            <div class="tabs" id="det-tabs">
+              <div class="tab active" onclick="showTab('timeline',this)" data-i="tab_timeline">Cronologia</div>
+              <div class="tab" onclick="showTab('hw',this)" data-i="tab_hw">Alterações HW</div>
+              <div class="tab" onclick="showTab('info',this)" data-i="tab_info">Detalhes</div>
+            </div>
+            <div id="tab-timeline">
+              <div class="entry-bar">
+                <button class="btn btn-sm" onclick="addEntry('email')">✉ <span data-i="add_email">Email</span></button>
+                <button class="btn btn-sm" onclick="addEntry('eml')">⤵ <span data-i="import_eml">Importar .eml</span></button>
+                <button class="btn btn-sm" onclick="addEntry('file')">📎 <span data-i="add_file">Ficheiro</span></button>
+                <button class="btn btn-sm" onclick="addEntry('note')">📝 <span data-i="add_note">Nota</span></button>
+                <button class="btn btn-sm" onclick="addEntry('hw')">🖥 <span data-i="add_hw">Alteração HW</span></button>
+              </div>
+              <div id="timeline-list"></div>
+            </div>
+            <div id="tab-hw" style="display:none"><div id="hw-list"></div></div>
+            <div id="tab-info" style="display:none"><div id="full-info-grid"></div></div>
           </div>
-          <div id="members-list"></div>
+
         </div>
-        <div id="tab-info" style="display:none"><div id="full-info-grid"></div></div>
+      </div>
+
+      <!-- EMAIL SIDE PANEL -->
+      <div class="email-panel" id="email-panel">
+        <div class="ep-header">
+          <span style="font-size:16px">✉</span>
+          <div class="ep-title" id="ep-title">Email</div>
+          <button class="btn btn-sm btn-ghost" onclick="closeEmailPanel()">✕</button>
+        </div>
+        <div class="ep-body" id="ep-body"></div>
       </div>
     </div>
   </div>
@@ -385,17 +367,11 @@ textarea{resize:vertical;min-height:70px}
 <!-- MODAL: NOVO PROJETO -->
 <div class="ov" id="ov-new">
   <div class="modal">
-    <div class="mhdr">
-      <div class="mtitle" data-i="new_project">Novo projeto</div>
-      <button class="btn btn-sm" onclick="closeModal('ov-new')">✕</button>
-    </div>
+    <div class="mhdr"><div class="mtitle" data-i="new_project">Novo projeto</div><button class="btn btn-sm" onclick="closeModal('ov-new')">✕</button></div>
     <div class="mbody">
       <div class="fg">
         <label data-i="import_email_lbl">Importar email do pedido (.eml)</label>
-        <div class="eml-zone" id="eml-new-zone"
-          ondragover="dzDrag(event,'eml-new-zone',true)"
-          ondragleave="dzDrag(event,'eml-new-zone',false)"
-          ondrop="dzDrop(event,'new')">
+        <div class="eml-zone" id="eml-new-zone" ondragover="dzDrag(event,'eml-new-zone',true)" ondragleave="dzDrag(event,'eml-new-zone',false)" ondrop="dzDrop(event,'new')">
           <input type="file" accept=".eml,.msg" onchange="dzSelect(event,'new')" id="eml-new-input"/>
           <div id="eml-new-idle">
             <div style="font-size:26px;color:var(--green);margin-bottom:6px">📧</div>
@@ -408,9 +384,7 @@ textarea{resize:vertical;min-height:70px}
             <button class="btn btn-sm" onclick="clearEml('new',event)" style="margin-left:auto">✕</button>
           </div>
         </div>
-        <div id="eml-new-preview" style="display:none;margin-top:6px">
-          <div class="eml-preview" id="eml-new-prev-txt"></div>
-        </div>
+        <div id="eml-new-preview" style="display:none;margin-top:6px"><div class="eml-preview" id="eml-new-prev-txt"></div></div>
       </div>
       <div style="display:flex;align-items:center;gap:12px">
         <div class="fg" style="flex:1"><label>ID</label><div class="id-box" id="new-id-box">—</div></div>
@@ -419,7 +393,13 @@ textarea{resize:vertical;min-height:70px}
       <div class="fr">
         <div class="fg"><label data-i="name_lbl">Nome *</label><input type="text" id="f-name"/></div>
         <div class="fg"><label data-i="type_lbl">Tipo</label>
-          <select id="f-type"><option value="price" data-i="type_price">Pedido de preço</option><option value="leadtime" data-i="type_lt">Lead time</option><option value="hw" data-i="type_hw">Alteração HW</option><option value="mixed" data-i="type_mixed">Preço + Lead time</option><option value="other" data-i="type_other">Outro</option></select>
+          <select id="f-type">
+            <option value="price" data-i="type_price">Pedido de preço</option>
+            <option value="leadtime" data-i="type_lt">Lead time</option>
+            <option value="hw" data-i="type_hw">Alteração HW</option>
+            <option value="mixed" data-i="type_mixed">Preço + Lead time</option>
+            <option value="other" data-i="type_other">Outro</option>
+          </select>
         </div>
       </div>
       <div class="fr">
@@ -433,7 +413,7 @@ textarea{resize:vertical;min-height:70px}
       <div class="fg"><label data-i="desc_lbl">Descrição</label><textarea id="f-desc" rows="3"></textarea></div>
       <div class="divider"></div>
       <div class="fg">
-        <label data-i="resp_lbl">Pendente em (responsável atual)</label>
+        <label data-i="resp_lbl">Pendente em</label>
         <div class="rtg" id="new-rtg">
           <button class="rtb sel-internal" onclick="selResp1(this,'internal')">🏢 <span data-i="resp_internal">Interno</span></button>
           <button class="rtb" onclick="selResp1(this,'am')">👤 <span data-i="resp_am">Area Manager</span></button>
@@ -441,10 +421,13 @@ textarea{resize:vertical;min-height:70px}
           <button class="rtb" onclick="selResp1(this,'vendor')">🚚 <span data-i="resp_vendor">Fornecedor</span></button>
         </div>
       </div>
-      <div class="fg"><label data-i="resp_name_lbl">Nome específico</label><input type="text" id="f-resp-name" /></div>
+      <div class="fg"><label data-i="resp_name_lbl">Nome específico</label><input type="text" id="f-resp-name"/></div>
       <div class="fr">
         <div class="fg"><label data-i="status_lbl">Estado</label>
-          <select id="f-status"><option value="open" data-i="status_open">Em aberto</option><option value="pending" data-i="status_pending">Aguarda informação</option></select>
+          <select id="f-status">
+            <option value="open" data-i="status_open">Em aberto</option>
+            <option value="pending" data-i="status_pending">Aguarda informação</option>
+          </select>
         </div>
       </div>
     </div>
@@ -455,13 +438,53 @@ textarea{resize:vertical;min-height:70px}
   </div>
 </div>
 
+<!-- MODAL: EDITAR PROJETO -->
+<div class="ov" id="ov-edit">
+  <div class="modal">
+    <div class="mhdr"><div class="mtitle" data-i="edit_project">Editar projeto</div><button class="btn btn-sm" onclick="closeModal('ov-edit')">✕</button></div>
+    <div class="mbody">
+      <div class="fr">
+        <div class="fg"><label data-i="name_lbl">Nome *</label><input type="text" id="e-name"/></div>
+        <div class="fg"><label data-i="type_lbl">Tipo</label>
+          <select id="e-type">
+            <option value="price" data-i="type_price">Pedido de preço</option>
+            <option value="leadtime" data-i="type_lt">Lead time</option>
+            <option value="hw" data-i="type_hw">Alteração HW</option>
+            <option value="mixed" data-i="type_mixed">Preço + Lead time</option>
+            <option value="other" data-i="type_other">Outro</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label data-i="am_lbl">Area Manager</label><input type="text" id="e-am"/></div>
+        <div class="fg"><label data-i="client_lbl">Cliente</label><input type="text" id="e-client"/></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label data-i="vendor_lbl">Fornecedor</label><input type="text" id="e-vendor"/></div>
+        <div class="fg"><label data-i="deadline_lbl">Prazo</label><input type="date" id="e-deadline"/></div>
+      </div>
+      <div class="fg"><label data-i="desc_lbl">Descrição</label><textarea id="e-desc" rows="4"></textarea></div>
+      <div class="fr">
+        <div class="fg"><label data-i="status_lbl">Estado</label>
+          <select id="e-status">
+            <option value="open" data-i="status_open">Em aberto</option>
+            <option value="pending" data-i="status_pending">Aguarda informação</option>
+            <option value="closed" data-i="status_closed">Fechado</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="mftr">
+      <button class="btn" onclick="closeModal('ov-edit')" data-i="cancel">Cancelar</button>
+      <button class="btn btn-p" onclick="saveEditProject()" data-i="save">Guardar alterações</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: ADICIONAR ENTRADA -->
 <div class="ov" id="ov-entry">
   <div class="modal modal-sm">
-    <div class="mhdr">
-      <div class="mtitle" id="entry-title">—</div>
-      <button class="btn btn-sm" onclick="closeModal('ov-entry')">✕</button>
-    </div>
+    <div class="mhdr"><div class="mtitle" id="entry-title">—</div><button class="btn btn-sm" onclick="closeModal('ov-entry')">✕</button></div>
     <div class="mbody" id="entry-body"></div>
     <div class="mftr">
       <button class="btn" onclick="closeModal('ov-entry')" data-i="cancel">Cancelar</button>
@@ -473,10 +496,7 @@ textarea{resize:vertical;min-height:70px}
 <!-- MODAL: ALTERAR RESPONSÁVEL -->
 <div class="ov" id="ov-resp">
   <div class="modal modal-sm">
-    <div class="mhdr">
-      <div class="mtitle" data-i="change_resp_title">Alterar responsável</div>
-      <button class="btn btn-sm" onclick="closeModal('ov-resp')">✕</button>
-    </div>
+    <div class="mhdr"><div class="mtitle" data-i="change_resp_title">Alterar responsável</div><button class="btn btn-sm" onclick="closeModal('ov-resp')">✕</button></div>
     <div class="mbody">
       <div class="fg">
         <label data-i="pending_in">Pendente em</label>
@@ -498,53 +518,6 @@ textarea{resize:vertical;min-height:70px}
   </div>
 </div>
 
-<!-- MODAL: EDITAR ESTADO -->
-<div class="ov" id="ov-status">
-  <div class="modal modal-sm">
-    <div class="mhdr">
-      <div class="mtitle" data-i="edit_status">Editar estado</div>
-      <button class="btn btn-sm" onclick="closeModal('ov-status')">✕</button>
-    </div>
-    <div class="mbody">
-      <div class="fg"><label data-i="status_lbl">Estado</label>
-        <select id="edit-status-sel">
-          <option value="open" data-i="status_open">Em aberto</option>
-          <option value="pending" data-i="status_pending">Aguarda informação</option>
-          <option value="closed" data-i="status_closed">Fechado</option>
-        </select>
-      </div>
-    </div>
-    <div class="mftr">
-      <button class="btn" onclick="closeModal('ov-status')" data-i="cancel">Cancelar</button>
-      <button class="btn btn-p" onclick="saveStatus()" data-i="save">Guardar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: ADICIONAR MEMBRO -->
-<div class="ov" id="ov-member">
-  <div class="modal modal-sm">
-    <div class="mhdr">
-      <div class="mtitle" data-i="add_member">Adicionar membro</div>
-      <button class="btn btn-sm" onclick="closeModal('ov-member')">✕</button>
-    </div>
-    <div class="mbody">
-      <div class="fg"><label data-i="user_email_lbl">Email do utilizador</label><input type="email" id="member-email" placeholder="email@empresa.com"/></div>
-      <div class="fg"><label data-i="role_lbl">Papel</label>
-        <select id="member-role">
-          <option value="area_manager" data-i="role_am">Area Manager</option>
-          <option value="follower" data-i="role_follower">Seguidor (só leitura)</option>
-        </select>
-      </div>
-      <div id="member-msg" style="font-size:12px;color:var(--red);display:none"></div>
-    </div>
-    <div class="mftr">
-      <button class="btn" onclick="closeModal('ov-member')" data-i="cancel">Cancelar</button>
-      <button class="btn btn-p" onclick="saveMember()" data-i="add">Adicionar</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // ============================================================
 // CONFIG — substitui pelos teus valores do Supabase
@@ -557,401 +530,143 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── I18N ────────────────────────────────────────────────────
 const LANGS = {
-  pt: {
-    dashboard:'Dashboard', projects:'Projetos', pending_in:'Pendente em',
-    resp_internal:'Interno / Procurement', resp_am:'Area Manager',
-    resp_client:'Cliente', resp_vendor:'Fornecedor', resp_blocked:'Bloqueado',
-    total_projects:'Total projetos', pending_internal:'Pendente interno',
-    blocked:'Bloqueados', awaits_vendor:'Aguarda fornecedor',
-    recent_projects:'Projetos recentes',
-    col_project:'Projeto', col_am:'Area Manager', col_pending:'Pendente em',
-    col_status:'Estado', col_date:'Data',
-    new_project:'Novo projeto', back:'Voltar', copy_id:'Copiar ID',
-    edit_status:'Editar estado', change_resp:'Alterar responsável',
-    change_resp_title:'Alterar responsável',
-    tab_timeline:'Cronologia', tab_hw:'Alterações HW',
-    tab_members:'Membros', tab_info:'Detalhes',
-    add_email:'Email', import_eml:'Importar .eml', add_file:'Ficheiro',
-    add_note:'Nota', add_hw:'Alteração HW',
-    add_member:'Adicionar membro',
-    import_email_lbl:'Importar email do pedido (.eml)',
-    eml_drag:'Arrasta o .eml aqui ou clica para selecionar',
-    eml_hint:'Outlook: Ficheiro → Guardar como → .eml',
-    id_auto:'gerado automaticamente',
-    name_lbl:'Nome *', type_lbl:'Tipo', am_lbl:'Area Manager',
-    client_lbl:'Cliente', vendor_lbl:'Fornecedor', deadline_lbl:'Prazo',
-    desc_lbl:'Descrição', resp_lbl:'Pendente em (responsável atual)',
-    resp_name_lbl:'Nome específico', status_lbl:'Estado',
-    reason_lbl:'Motivo', user_email_lbl:'Email do utilizador',
-    role_lbl:'Papel',
-    type_price:'Pedido de preço', type_lt:'Lead time', type_hw:'Alteração HW',
-    type_mixed:'Preço + Lead time', type_other:'Outro',
-    status_open:'Em aberto', status_pending:'Aguarda informação', status_closed:'Fechado',
-    role_am:'Area Manager', role_follower:'Seguidor (só leitura)',
-    cancel:'Cancelar', save:'Guardar', confirm:'Confirmar',
-    create_project:'Criar projeto', add:'Adicionar',
-    language:'Idioma', logout:'Sair',
-    lbl_name:'Nome completo', lbl_email:'Email', lbl_pass:'Password',
-    auth_login:'Entrar', auth_register:'Criar conta',
-    auth_no_account:'Não tens conta?', auth_has_account:'Já tens conta?',
-    lbl_lang_auth:'Idioma',
-    entry_email:'Adicionar email', entry_eml:'Importar .eml',
-    entry_file:'Adicionar ficheiro', entry_note:'Adicionar nota',
-    entry_hw:'Registar alteração HW',
-    from_lbl:'De', subject_lbl:'Assunto', body_lbl:'Conteúdo / resumo',
-    file_name_lbl:'Nome do ficheiro', file_type_lbl:'Tipo', file_notes_lbl:'Notas',
-    ftype_quote:'Cotação', ftype_spec:'Especificação técnica',
-    ftype_email:'Email exportado', ftype_other:'Outro',
-    component_lbl:'Componente / Referência', old_ver:'Versão anterior',
-    new_ver:'Versão nova', price_impact:'Impacto preço',
-    pi_none:'Sem alteração', pi_up:'Aumento', pi_down:'Redução',
-    justification_lbl:'Justificação',
-    since:'desde', created_on:'Criado em',
-    am_label:'Area Manager', client_label:'Cliente',
-    vendor_label:'Fornecedor', type_label:'Tipo',
-    deadline_label:'Prazo', no_entries:'Sem entradas ainda.',
-    no_hw:'Sem alterações HW.', no_members:'Sem membros adicionados.',
-    no_projects:'Nenhum projeto encontrado.',
-    loading:'A carregar...', saving:'A guardar...',
-    copied:'ID copiado para clipboard. Cola no assunto dos emails: ',
-    transfer:'Transferência', created_proj:'Projeto criado',
-    sb_menu:'Menu',
-    filter_all:'Todos', filter_open:'Em aberto', filter_pending:'Aguarda info',
-    filter_closed:'Fechados', filter_hw:'Alteração HW',
-    filter_int:'Pendente interno', filter_am:'Pendente AM',
-    filter_vendor:'Pendente fornecedor', filter_blocked:'Bloqueados',
-    prev_resp:'De', next_resp:'Para', reason:'Motivo',
-    member_not_found:'Utilizador não encontrado.',
-    member_added:'Membro adicionado.',
-    price_label:'Pedido de preço', lt_label:'Lead time',
-  },
-  en: {
-    dashboard:'Dashboard', projects:'Projects', pending_in:'Pending at',
-    resp_internal:'Internal / Procurement', resp_am:'Area Manager',
-    resp_client:'Client', resp_vendor:'Vendor', resp_blocked:'Blocked',
-    total_projects:'Total projects', pending_internal:'Pending internal',
-    blocked:'Blocked', awaits_vendor:'Awaiting vendor',
-    recent_projects:'Recent projects',
-    col_project:'Project', col_am:'Area Manager', col_pending:'Pending at',
-    col_status:'Status', col_date:'Date',
-    new_project:'New project', back:'Back', copy_id:'Copy ID',
-    edit_status:'Edit status', change_resp:'Change responsible',
-    change_resp_title:'Change responsible',
-    tab_timeline:'Timeline', tab_hw:'HW Changes',
-    tab_members:'Members', tab_info:'Details',
-    add_email:'Email', import_eml:'Import .eml', add_file:'File',
-    add_note:'Note', add_hw:'HW Change',
-    add_member:'Add member',
-    import_email_lbl:'Import request email (.eml)',
-    eml_drag:'Drag .eml here or click to select',
-    eml_hint:'Outlook: File → Save As → .eml',
-    id_auto:'auto-generated',
-    name_lbl:'Name *', type_lbl:'Type', am_lbl:'Area Manager',
-    client_lbl:'Client', vendor_lbl:'Vendor', deadline_lbl:'Deadline',
-    desc_lbl:'Description', resp_lbl:'Pending at (current responsible)',
-    resp_name_lbl:'Specific name', status_lbl:'Status',
-    reason_lbl:'Reason', user_email_lbl:'User email',
-    role_lbl:'Role',
-    type_price:'Price request', type_lt:'Lead time', type_hw:'HW Change',
-    type_mixed:'Price + Lead time', type_other:'Other',
-    status_open:'Open', status_pending:'Awaiting info', status_closed:'Closed',
-    role_am:'Area Manager', role_follower:'Follower (read only)',
-    cancel:'Cancel', save:'Save', confirm:'Confirm',
-    create_project:'Create project', add:'Add',
-    language:'Language', logout:'Sign out',
-    lbl_name:'Full name', lbl_email:'Email', lbl_pass:'Password',
-    auth_login:'Sign in', auth_register:'Create account',
-    auth_no_account:"Don't have an account?", auth_has_account:'Already have an account?',
-    lbl_lang_auth:'Language',
-    entry_email:'Add email', entry_eml:'Import .eml',
-    entry_file:'Add file', entry_note:'Add note',
-    entry_hw:'Register HW change',
-    from_lbl:'From', subject_lbl:'Subject', body_lbl:'Content / summary',
-    file_name_lbl:'File name', file_type_lbl:'Type', file_notes_lbl:'Notes',
-    ftype_quote:'Quote', ftype_spec:'Technical spec',
-    ftype_email:'Exported email', ftype_other:'Other',
-    component_lbl:'Component / Reference', old_ver:'Old version',
-    new_ver:'New version', price_impact:'Price impact',
-    pi_none:'No change', pi_up:'Increase', pi_down:'Decrease',
-    justification_lbl:'Justification',
-    since:'since', created_on:'Created on',
-    am_label:'Area Manager', client_label:'Client',
-    vendor_label:'Vendor', type_label:'Type',
-    deadline_label:'Deadline', no_entries:'No entries yet.',
-    no_hw:'No HW changes.', no_members:'No members added.',
-    no_projects:'No projects found.',
-    loading:'Loading...', saving:'Saving...',
-    copied:'ID copied to clipboard. Paste in email subject: ',
-    transfer:'Transfer', created_proj:'Project created',
-    sb_menu:'Menu',
-    filter_all:'All', filter_open:'Open', filter_pending:'Awaiting info',
-    filter_closed:'Closed', filter_hw:'HW Change',
-    filter_int:'Pending internal', filter_am:'Pending AM',
-    filter_vendor:'Pending vendor', filter_blocked:'Blocked',
-    prev_resp:'From', next_resp:'To', reason:'Reason',
-    member_not_found:'User not found.',
-    member_added:'Member added.',
-    price_label:'Price request', lt_label:'Lead time',
-  },
-  es: {
-    dashboard:'Dashboard', projects:'Proyectos', pending_in:'Pendiente en',
-    resp_internal:'Interno / Compras', resp_am:'Area Manager',
-    resp_client:'Cliente', resp_vendor:'Proveedor', resp_blocked:'Bloqueado',
-    total_projects:'Total proyectos', pending_internal:'Pendiente interno',
-    blocked:'Bloqueados', awaits_vendor:'Espera proveedor',
-    recent_projects:'Proyectos recientes',
-    col_project:'Proyecto', col_am:'Area Manager', col_pending:'Pendiente en',
-    col_status:'Estado', col_date:'Fecha',
-    new_project:'Nuevo proyecto', back:'Volver', copy_id:'Copiar ID',
-    edit_status:'Editar estado', change_resp:'Cambiar responsable',
-    change_resp_title:'Cambiar responsable',
-    tab_timeline:'Cronología', tab_hw:'Cambios HW',
-    tab_members:'Miembros', tab_info:'Detalles',
-    add_email:'Email', import_eml:'Importar .eml', add_file:'Archivo',
-    add_note:'Nota', add_hw:'Cambio HW',
-    add_member:'Añadir miembro',
-    import_email_lbl:'Importar email del pedido (.eml)',
-    eml_drag:'Arrastra el .eml aquí o haz clic para seleccionar',
-    eml_hint:'Outlook: Archivo → Guardar como → .eml',
-    id_auto:'generado automáticamente',
-    name_lbl:'Nombre *', type_lbl:'Tipo', am_lbl:'Area Manager',
-    client_lbl:'Cliente', vendor_lbl:'Proveedor', deadline_lbl:'Plazo',
-    desc_lbl:'Descripción', resp_lbl:'Pendiente en (responsable actual)',
-    resp_name_lbl:'Nombre específico', status_lbl:'Estado',
-    reason_lbl:'Motivo', user_email_lbl:'Email del usuario',
-    role_lbl:'Rol',
-    type_price:'Solicitud de precio', type_lt:'Lead time', type_hw:'Cambio HW',
-    type_mixed:'Precio + Lead time', type_other:'Otro',
-    status_open:'Abierto', status_pending:'Espera información', status_closed:'Cerrado',
-    role_am:'Area Manager', role_follower:'Seguidor (solo lectura)',
-    cancel:'Cancelar', save:'Guardar', confirm:'Confirmar',
-    create_project:'Crear proyecto', add:'Añadir',
-    language:'Idioma', logout:'Cerrar sesión',
-    lbl_name:'Nombre completo', lbl_email:'Email', lbl_pass:'Contraseña',
-    auth_login:'Entrar', auth_register:'Crear cuenta',
-    auth_no_account:'¿No tienes cuenta?', auth_has_account:'¿Ya tienes cuenta?',
-    lbl_lang_auth:'Idioma',
-    entry_email:'Añadir email', entry_eml:'Importar .eml',
-    entry_file:'Añadir archivo', entry_note:'Añadir nota',
-    entry_hw:'Registrar cambio HW',
-    from_lbl:'De', subject_lbl:'Asunto', body_lbl:'Contenido / resumen',
-    file_name_lbl:'Nombre del archivo', file_type_lbl:'Tipo', file_notes_lbl:'Notas',
-    ftype_quote:'Cotización', ftype_spec:'Especificación técnica',
-    ftype_email:'Email exportado', ftype_other:'Otro',
-    component_lbl:'Componente / Referencia', old_ver:'Versión anterior',
-    new_ver:'Versión nueva', price_impact:'Impacto precio',
-    pi_none:'Sin cambio', pi_up:'Aumento', pi_down:'Reducción',
-    justification_lbl:'Justificación',
-    since:'desde', created_on:'Creado el',
-    am_label:'Area Manager', client_label:'Cliente',
-    vendor_label:'Proveedor', type_label:'Tipo',
-    deadline_label:'Plazo', no_entries:'Sin entradas aún.',
-    no_hw:'Sin cambios HW.', no_members:'Sin miembros añadidos.',
-    no_projects:'Ningún proyecto encontrado.',
-    loading:'Cargando...', saving:'Guardando...',
-    copied:'ID copiado al portapapeles. Pégalo en el asunto del email: ',
-    transfer:'Transferencia', created_proj:'Proyecto creado',
-    sb_menu:'Menú',
-    filter_all:'Todos', filter_open:'Abierto', filter_pending:'Espera info',
-    filter_closed:'Cerrados', filter_hw:'Cambio HW',
-    filter_int:'Pendiente interno', filter_am:'Pendiente AM',
-    filter_vendor:'Pendiente proveedor', filter_blocked:'Bloqueados',
-    prev_resp:'De', next_resp:'Para', reason:'Motivo',
-    member_not_found:'Usuario no encontrado.',
-    member_added:'Miembro añadido.',
-    price_label:'Solicitud precio', lt_label:'Lead time',
-  }
+  pt:{dashboard:'Dashboard',projects:'Projetos',pending_in:'Pendente em',resp_internal:'Interno / Procurement',resp_am:'Area Manager',resp_client:'Cliente',resp_vendor:'Fornecedor',resp_blocked:'Bloqueado',total_projects:'Total projetos',pending_internal:'Pendente interno',blocked:'Bloqueados',awaits_vendor:'Aguarda fornecedor',recent_projects:'Projetos recentes',col_project:'Projeto',col_am:'Area Manager',col_pending:'Pendente em',col_status:'Estado',col_date:'Data',new_project:'Novo projeto',edit_project:'Editar projeto',back:'Voltar',copy_id:'Copiar ID',edit:'Editar',change_resp:'Alterar',change_resp_title:'Alterar responsável',tab_timeline:'Cronologia',tab_hw:'Alterações HW',tab_info:'Detalhes',add_email:'Email',import_eml:'Importar .eml',add_file:'Ficheiro',add_note:'Nota',add_hw:'Alteração HW',import_email_lbl:'Importar email do pedido (.eml)',eml_drag:'Arrasta o .eml aqui ou clica para selecionar',eml_hint:'Outlook: Ficheiro → Guardar como → .eml',id_auto:'gerado automaticamente',name_lbl:'Nome *',type_lbl:'Tipo',am_lbl:'Area Manager',client_lbl:'Cliente',vendor_lbl:'Fornecedor',deadline_lbl:'Prazo',desc_lbl:'Descrição',resp_lbl:'Pendente em',resp_name_lbl:'Nome específico',status_lbl:'Estado',reason_lbl:'Motivo',type_price:'Pedido de preço',type_lt:'Lead time',type_hw:'Alteração HW',type_mixed:'Preço + Lead time',type_other:'Outro',status_open:'Em aberto',status_pending:'Aguarda informação',status_closed:'Fechado',cancel:'Cancelar',save:'Guardar alterações',confirm:'Confirmar',create_project:'Criar projeto',language:'Idioma',logout:'Sair',auth_login:'Entrar',auth_register:'Criar conta',auth_no_account:'Não tens conta?',auth_has_account:'Já tens conta?',entry_email:'Adicionar email',entry_eml:'Importar .eml',entry_file:'Adicionar ficheiro',entry_note:'Adicionar nota',entry_hw:'Registar alteração HW',from_lbl:'De',to_lbl:'Para',subject_lbl:'Assunto',body_lbl:'Conteúdo',file_name_lbl:'Nome do ficheiro',file_type_lbl:'Tipo',file_notes_lbl:'Notas',ftype_quote:'Cotação',ftype_spec:'Especificação técnica',ftype_email:'Email exportado',ftype_other:'Outro',component_lbl:'Componente / Referência',old_ver:'Versão anterior',new_ver:'Versão nova',price_impact:'Impacto preço',pi_none:'Sem alteração',pi_up:'Aumento',pi_down:'Redução',justification_lbl:'Justificação',since:'desde',created_on:'Criado em',am_label:'Area Manager',client_label:'Cliente',vendor_label:'Fornecedor',type_label:'Tipo',deadline_label:'Prazo',no_entries:'Sem entradas ainda.',no_hw:'Sem alterações HW.',no_projects:'Nenhum projeto encontrado.',loading:'A carregar...',copied:'ID copiado. Cola no assunto dos emails: ',transfer:'Transferência',created_proj:'Projeto criado',sb_menu:'Menu',filter_all:'Todos',filter_open:'Em aberto',filter_pending:'Aguarda info',filter_closed:'Fechados',filter_int:'Pendente interno',filter_am:'Pendente AM',filter_vendor:'Pendente fornecedor',filter_blocked:'Bloqueados',prev_resp:'De',next_resp:'Para',reason:'Motivo',email_date:'Data do email',email_preview:'Ver email completo',click_to_view:'Clica para ver o email'},
+  en:{dashboard:'Dashboard',projects:'Projects',pending_in:'Pending at',resp_internal:'Internal / Procurement',resp_am:'Area Manager',resp_client:'Client',resp_vendor:'Vendor',resp_blocked:'Blocked',total_projects:'Total projects',pending_internal:'Pending internal',blocked:'Blocked',awaits_vendor:'Awaiting vendor',recent_projects:'Recent projects',col_project:'Project',col_am:'Area Manager',col_pending:'Pending at',col_status:'Status',col_date:'Date',new_project:'New project',edit_project:'Edit project',back:'Back',copy_id:'Copy ID',edit:'Edit',change_resp:'Change',change_resp_title:'Change responsible',tab_timeline:'Timeline',tab_hw:'HW Changes',tab_info:'Details',add_email:'Email',import_eml:'Import .eml',add_file:'File',add_note:'Note',add_hw:'HW Change',import_email_lbl:'Import request email (.eml)',eml_drag:'Drag .eml here or click to select',eml_hint:'Outlook: File → Save As → .eml',id_auto:'auto-generated',name_lbl:'Name *',type_lbl:'Type',am_lbl:'Area Manager',client_lbl:'Client',vendor_lbl:'Vendor',deadline_lbl:'Deadline',desc_lbl:'Description',resp_lbl:'Pending at',resp_name_lbl:'Specific name',status_lbl:'Status',reason_lbl:'Reason',type_price:'Price request',type_lt:'Lead time',type_hw:'HW Change',type_mixed:'Price + Lead time',type_other:'Other',status_open:'Open',status_pending:'Awaiting info',status_closed:'Closed',cancel:'Cancel',save:'Save changes',confirm:'Confirm',create_project:'Create project',language:'Language',logout:'Sign out',auth_login:'Sign in',auth_register:'Create account',auth_no_account:"Don't have an account?",auth_has_account:'Already have an account?',entry_email:'Add email',entry_eml:'Import .eml',entry_file:'Add file',entry_note:'Add note',entry_hw:'Register HW change',from_lbl:'From',to_lbl:'To',subject_lbl:'Subject',body_lbl:'Body',file_name_lbl:'File name',file_type_lbl:'Type',file_notes_lbl:'Notes',ftype_quote:'Quote',ftype_spec:'Technical spec',ftype_email:'Exported email',ftype_other:'Other',component_lbl:'Component / Reference',old_ver:'Old version',new_ver:'New version',price_impact:'Price impact',pi_none:'No change',pi_up:'Increase',pi_down:'Decrease',justification_lbl:'Justification',since:'since',created_on:'Created on',am_label:'Area Manager',client_label:'Client',vendor_label:'Vendor',type_label:'Type',deadline_label:'Deadline',no_entries:'No entries yet.',no_hw:'No HW changes.',no_projects:'No projects found.',loading:'Loading...',copied:'ID copied. Paste in email subject: ',transfer:'Transfer',created_proj:'Project created',sb_menu:'Menu',filter_all:'All',filter_open:'Open',filter_pending:'Awaiting info',filter_closed:'Closed',filter_int:'Pending internal',filter_am:'Pending AM',filter_vendor:'Pending vendor',filter_blocked:'Blocked',prev_resp:'From',next_resp:'To',reason:'Reason',email_date:'Email date',email_preview:'View full email',click_to_view:'Click to view email'},
+  es:{dashboard:'Dashboard',projects:'Proyectos',pending_in:'Pendiente en',resp_internal:'Interno / Compras',resp_am:'Area Manager',resp_client:'Cliente',resp_vendor:'Proveedor',resp_blocked:'Bloqueado',total_projects:'Total proyectos',pending_internal:'Pendiente interno',blocked:'Bloqueados',awaits_vendor:'Espera proveedor',recent_projects:'Proyectos recientes',col_project:'Proyecto',col_am:'Area Manager',col_pending:'Pendiente en',col_status:'Estado',col_date:'Fecha',new_project:'Nuevo proyecto',edit_project:'Editar proyecto',back:'Volver',copy_id:'Copiar ID',edit:'Editar',change_resp:'Cambiar',change_resp_title:'Cambiar responsable',tab_timeline:'Cronología',tab_hw:'Cambios HW',tab_info:'Detalles',add_email:'Email',import_eml:'Importar .eml',add_file:'Archivo',add_note:'Nota',add_hw:'Cambio HW',import_email_lbl:'Importar email del pedido (.eml)',eml_drag:'Arrastra el .eml aquí o haz clic',eml_hint:'Outlook: Archivo → Guardar como → .eml',id_auto:'generado automáticamente',name_lbl:'Nombre *',type_lbl:'Tipo',am_lbl:'Area Manager',client_lbl:'Cliente',vendor_lbl:'Proveedor',deadline_lbl:'Plazo',desc_lbl:'Descripción',resp_lbl:'Pendiente en',resp_name_lbl:'Nombre específico',status_lbl:'Estado',reason_lbl:'Motivo',type_price:'Solicitud precio',type_lt:'Lead time',type_hw:'Cambio HW',type_mixed:'Precio + Lead time',type_other:'Otro',status_open:'Abierto',status_pending:'Espera información',status_closed:'Cerrado',cancel:'Cancelar',save:'Guardar cambios',confirm:'Confirmar',create_project:'Crear proyecto',language:'Idioma',logout:'Cerrar sesión',auth_login:'Entrar',auth_register:'Crear cuenta',auth_no_account:'¿No tienes cuenta?',auth_has_account:'¿Ya tienes cuenta?',entry_email:'Añadir email',entry_eml:'Importar .eml',entry_file:'Añadir archivo',entry_note:'Añadir nota',entry_hw:'Registrar cambio HW',from_lbl:'De',to_lbl:'Para',subject_lbl:'Asunto',body_lbl:'Contenido',file_name_lbl:'Nombre archivo',file_type_lbl:'Tipo',file_notes_lbl:'Notas',ftype_quote:'Cotización',ftype_spec:'Especificación técnica',ftype_email:'Email exportado',ftype_other:'Otro',component_lbl:'Componente / Referencia',old_ver:'Versión anterior',new_ver:'Versión nueva',price_impact:'Impacto precio',pi_none:'Sin cambio',pi_up:'Aumento',pi_down:'Reducción',justification_lbl:'Justificación',since:'desde',created_on:'Creado el',am_label:'Area Manager',client_label:'Cliente',vendor_label:'Proveedor',type_label:'Tipo',deadline_label:'Plazo',no_entries:'Sin entradas aún.',no_hw:'Sin cambios HW.',no_projects:'Ningún proyecto encontrado.',loading:'Cargando...',copied:'ID copiado. Pégalo en el asunto: ',transfer:'Transferencia',created_proj:'Proyecto creado',sb_menu:'Menú',filter_all:'Todos',filter_open:'Abierto',filter_pending:'Espera info',filter_closed:'Cerrados',filter_int:'Pendiente interno',filter_am:'Pendiente AM',filter_vendor:'Pendiente proveedor',filter_blocked:'Bloqueados',prev_resp:'De',next_resp:'Para',reason:'Motivo',email_date:'Fecha email',email_preview:'Ver email completo',click_to_view:'Haz clic para ver el email'}
 };
 
-let lang = 'pt';
-let currentUser = null, currentProfile = null;
-let projects = [], allProfiles = [];
-let currentProjectId = null;
-let filterType = 'all', filterVal = '', searchQuery = '';
-let resp1 = 'internal', resp2 = 'internal';
-let currentEntryType = '', pendingEntryPid = null;
-let emlData = { new: null, entry: null };
-let isRegister = false;
-let authLang = 'pt';
+let lang='pt', currentUser=null, currentProfile=null;
+let projects=[], currentProjectId=null;
+let filterType='all', filterVal='', searchQuery='';
+let resp1='internal', resp2='internal';
+let currentEntryType='', pendingEntryPid=null;
+let emlData={new:null,entry:null};
+let authMode='login', authLang='pt';
+let activeEmailEntryId=null;
 
-function t(key) { return (LANGS[lang] && LANGS[lang][key]) || (LANGS['pt'][key]) || key; }
+function t(k){return(LANGS[lang]&&LANGS[lang][k])||(LANGS.pt[k])||k;}
 
-function applyLang() {
-  document.querySelectorAll('[data-i]').forEach(el => {
-    const k = el.getAttribute('data-i');
-    const tx = t(k);
-    if (tx) el.textContent = tx;
-  });
-  document.getElementById('search-input').placeholder = 'PM-2025-0001…';
+function applyLang(){
+  document.querySelectorAll('[data-i]').forEach(el=>{const k=el.getAttribute('data-i');const tx=t(k);if(tx)el.textContent=tx;});
   renderFilterChips();
-  if (currentProjectId) renderDetailView(projects.find(p => p.id === currentProjectId));
 }
 
-function detectBrowserLang() {
-  const bl = (navigator.language || 'pt').toLowerCase().slice(0,2);
-  return ['pt','en','es'].includes(bl) ? bl : 'pt';
-}
+function detectBrowserLang(){const bl=(navigator.language||'pt').toLowerCase().slice(0,2);return['pt','en','es'].includes(bl)?bl:'pt';}
 
-async function setLang(l) {
-  lang = l;
-  ['pt','en','es'].forEach(x => {
-    document.getElementById('lang-'+x)?.classList.toggle('active', x===l);
-  });
+async function setLang(l){
+  lang=l;
+  ['pt','en','es'].forEach(x=>document.getElementById('lang-'+x)?.classList.toggle('active',x===l));
   applyLang();
-  if (currentProfile) {
-    await sb.from('profiles').update({ language: l }).eq('id', currentProfile.id);
-    currentProfile.language = l;
-  }
+  if(currentProfile){await sb.from('profiles').update({language:l}).eq('id',currentProfile.id);currentProfile.language=l;}
 }
-
-function setLangAuth(l) {
-  authLang = l;
-  lang = l;
-  ['pt','en','es'].forEach(x => {
-    document.getElementById('auth-lang-'+x)?.classList.toggle('active', x===l);
-  });
+function setLangAuth(l){
+  authLang=l;lang=l;
+  ['pt','en','es'].forEach(x=>document.getElementById('auth-lang-'+x)?.classList.toggle('active',x===l));
   renderAuthScreen();
 }
 
-// ── AUTH ────────────────────────────────────────────────────
-let authMode = 'login';
-function toggleAuth() {
-  authMode = authMode === 'login' ? 'register' : 'login';
-  renderAuthScreen();
+// ── AUTH ─────────────────────────────────────────────────────
+function toggleAuth(){authMode=authMode==='login'?'register':'login';renderAuthScreen();}
+function renderAuthScreen(){
+  const isReg=authMode==='register';
+  document.getElementById('auth-title').textContent=isReg?t('auth_register'):t('auth_login');
+  document.getElementById('auth-btn').textContent=isReg?t('auth_register'):t('auth_login');
+  document.getElementById('wrap-name').style.display=isReg?'':'none';
+  document.getElementById('auth-sw').innerHTML=(isReg?t('auth_has_account'):t('auth_no_account'))+' <span style="color:var(--green);font-weight:600">'+(isReg?t('auth_login'):t('auth_register'))+'</span>';
+  document.getElementById('auth-err').style.display='none';
 }
-function renderAuthScreen() {
-  const isReg = authMode === 'register';
-  document.getElementById('auth-title').textContent = isReg ? t('auth_register') : t('auth_login');
-  document.getElementById('auth-btn').textContent = isReg ? t('auth_register') : t('auth_login');
-  document.getElementById('wrap-name').style.display = isReg ? '' : 'none';
-  document.getElementById('auth-sw').innerHTML = (isReg ? t('auth_has_account') : t('auth_no_account')) + ' <span>' + (isReg ? t('auth_login') : t('auth_register')) + '</span>';
-  document.getElementById('auth-sw').querySelector('span').style.color = 'var(--green)';
-  document.getElementById('auth-sw').querySelector('span').style.fontWeight = '600';
-  document.getElementById('lbl-name').textContent = t('lbl_name');
-  document.getElementById('lbl-email').textContent = t('lbl_email');
-  document.getElementById('lbl-pass').textContent = t('lbl_pass');
-  document.getElementById('lbl-lang-auth').textContent = t('lbl_lang_auth');
-  document.getElementById('auth-err').style.display = 'none';
+async function authSubmit(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-pass').value;
+  const name=document.getElementById('auth-name').value.trim();
+  const err=document.getElementById('auth-err');
+  err.style.display='none';
+  const btn=document.getElementById('auth-btn');
+  btn.textContent=t('loading');btn.disabled=true;
+  try{
+    if(authMode==='register'){const{error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name||email,language:authLang}}});if(error)throw error;}
+    else{const{error}=await sb.auth.signInWithPassword({email,password:pass});if(error)throw error;}
+  }catch(e){err.textContent=e.message;err.style.display='';}
+  btn.textContent=authMode==='register'?t('auth_register'):t('auth_login');btn.disabled=false;
 }
+async function logout(){await sb.auth.signOut();location.reload();}
 
-async function authSubmit() {
-  const email = document.getElementById('auth-email').value.trim();
-  const pass = document.getElementById('auth-pass').value;
-  const name = document.getElementById('auth-name').value.trim();
-  const err = document.getElementById('auth-err');
-  err.style.display = 'none';
-  const btn = document.getElementById('auth-btn');
-  btn.textContent = t('loading'); btn.disabled = true;
-  try {
-    if (authMode === 'register') {
-      const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { full_name: name || email, language: authLang } } });
-      if (error) throw error;
-    } else {
-      const { error } = await sb.auth.signInWithPassword({ email, password: pass });
-      if (error) throw error;
-    }
-  } catch(e) {
-    err.textContent = e.message; err.style.display = '';
-  }
-  btn.textContent = authMode === 'register' ? t('auth_register') : t('auth_login');
-  btn.disabled = false;
-}
-
-async function logout() {
-  await sb.auth.signOut();
-}
-
-// ── INIT ────────────────────────────────────────────────────
-async function init() {
-  lang = detectBrowserLang();
-  document.getElementById('loading-txt').textContent = t('loading');
-
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { showAuth(); return; }
-
+// ── INIT ─────────────────────────────────────────────────────
+async function init(){
+  lang=detectBrowserLang();
+  document.getElementById('loading-txt').textContent=t('loading');
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){showAuth();return;}
   await loadProfile(session.user);
   await loadProjects();
   showApp();
-
-  sb.auth.onAuthStateChange(async (event, sess) => {
-    if (event === 'SIGNED_OUT') { location.reload(); }
-    if (event === 'SIGNED_IN' && sess) { await loadProfile(sess.user); await loadProjects(); showApp(); }
+  sb.auth.onAuthStateChange(async(event,sess)=>{
+    if(event==='SIGNED_OUT'){location.reload();}
+    if(event==='SIGNED_IN'&&sess){await loadProfile(sess.user);await loadProjects();showApp();}
   });
-
-  // realtime: projetos atualizados por outros users
-  sb.channel('projects-rt').on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => loadProjects()).subscribe();
+  sb.channel('projects-rt').on('postgres_changes',{event:'*',schema:'public',table:'projects'},()=>loadProjects()).subscribe();
 }
 
-async function loadProfile(user) {
-  currentUser = user;
-  const { data } = await sb.from('profiles').select('*').eq('id', user.id).single();
-  currentProfile = data;
-  if (data?.language) { lang = data.language; }
-  document.getElementById('sb-username').textContent = data?.full_name || user.email;
-  document.getElementById('sb-userrole').textContent = t('resp_' + (data?.role === 'area_manager' ? 'am' : 'internal'));
-  ['pt','en','es'].forEach(x => document.getElementById('lang-'+x)?.classList.toggle('active', x===lang));
-  // load all profiles for member lookup
-  const { data: profs } = await sb.from('profiles').select('id,full_name,role');
-  allProfiles = profs || [];
+async function loadProfile(user){
+  currentUser=user;
+  const{data}=await sb.from('profiles').select('*').eq('id',user.id).single();
+  currentProfile=data;
+  if(data?.language)lang=data.language;
+  document.getElementById('sb-username').textContent=data?.full_name||user.email;
+  document.getElementById('sb-userrole').textContent=t('resp_'+(data?.role==='area_manager'?'am':'internal'));
+  ['pt','en','es'].forEach(x=>document.getElementById('lang-'+x)?.classList.toggle('active',x===lang));
 }
 
-async function loadProjects() {
-  const { data } = await sb.from('projects').select('*').order('created_at', { ascending: false });
-  projects = data || [];
+async function loadProjects(){
+  const{data}=await sb.from('projects').select('*').order('created_at',{ascending:false});
+  projects=data||[];
   renderAll();
 }
 
-function showAuth() {
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = '';
-  document.getElementById('app').style.display = 'none';
+function showAuth(){
+  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('auth-screen').style.display='';
+  document.getElementById('app').style.display='none';
   renderAuthScreen();
 }
-
-function showApp() {
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app').style.display = '';
+function showApp(){
+  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='';
   applyLang();
 }
 
-// ── VIEWS ────────────────────────────────────────────────────
-function showView(v) {
-  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+// ── VIEWS ─────────────────────────────────────────────────────
+function showView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v)?.classList.add('active');
-  document.querySelectorAll('.ni').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(el=>el.classList.remove('active'));
   document.getElementById('nav-'+v)?.classList.add('active');
-  document.getElementById('topbar-title').textContent = t(v === 'detail' ? 'projects' : v);
-  if (v !== 'detail') renderAll();
+  document.getElementById('topbar-title').textContent=t(v==='detail'?'projects':v);
+  closeEmailPanel();
+  if(v!=='detail')renderAll();
+}
+function filterBy(type,val){filterType=type;filterVal=val;showView('projects');document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));}
+function onSearch(q){searchQuery=q.toLowerCase();renderAll();}
+
+// ── RENDER ────────────────────────────────────────────────────
+const RLABELS=()=>({internal:t('resp_internal'),am:t('resp_am'),client:t('resp_client'),vendor:t('resp_vendor'),blocked:t('resp_blocked')});
+const RCLS={internal:'rp-internal',am:'rp-am',client:'rp-client',vendor:'rp-vendor',blocked:'rp-blocked'};
+const RICONS={internal:'🏢',am:'👤',client:'🏪',vendor:'🚚',blocked:'⛔'};
+const TLABELS=()=>({price:t('type_price'),leadtime:t('type_lt'),hw:t('type_hw'),mixed:t('type_mixed'),other:t('type_other')});
+const SLABELS=()=>({open:t('status_open'),pending:t('status_pending'),closed:t('status_closed')});
+const SCLS={open:'b-open',pending:'b-pending',closed:'b-closed'};
+
+function pillHtml(p){
+  const cls=RCLS[p.resp_type]||'rp-internal';
+  const name=p.resp_name||RLABELS()[p.resp_type]||p.resp_type;
+  return`<span class="rp ${cls}">${RICONS[p.resp_type]||''} ${name}</span>`;
 }
 
-function filterBy(type, val) {
-  filterType = type; filterVal = val;
-  showView('projects');
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-}
-
-function onSearch(q) { searchQuery = q.toLowerCase(); renderAll(); }
-
-// ── RENDER ───────────────────────────────────────────────────
-const RLABELS = () => ({ internal: t('resp_internal'), am: t('resp_am'), client: t('resp_client'), vendor: t('resp_vendor'), blocked: t('resp_blocked') });
-const RCLS = { internal:'rp-internal', am:'rp-am', client:'rp-client', vendor:'rp-vendor', blocked:'rp-blocked' };
-const RICONS = { internal:'🏢', am:'👤', client:'🏪', vendor:'🚚', blocked:'⛔' };
-const TYPE_LABELS = () => ({ price: t('type_price'), leadtime: t('type_lt'), hw: t('type_hw'), mixed: t('type_mixed'), other: t('type_other') });
-const STATUS_LABELS = () => ({ open: t('status_open'), pending: t('status_pending'), closed: t('status_closed') });
-const STATUS_CLS = { open:'b-open', pending:'b-pending', closed:'b-closed' };
-
-function pillHtml(p) {
-  const cls = RCLS[p.resp_type] || 'rp-internal';
-  const name = p.resp_name || RLABELS()[p.resp_type] || p.resp_type;
-  return `<span class="rp ${cls}">${RICONS[p.resp_type] || ''} ${name}</span>`;
-}
-
-function rowHtml(p) {
-  const sl = STATUS_LABELS();
-  const sc = STATUS_CLS[p.status] || 'b-open';
-  const dt = p.created_at ? p.created_at.slice(0,10) : '—';
-  return `<div class="tr" onclick="openDetail('${p.id}')">
+function rowHtml(p){
+  const sl=SLABELS();const sc=SCLS[p.status]||'b-open';
+  const dt=p.created_at?p.created_at.slice(0,10):'—';
+  return`<div class="tr" onclick="openDetail('${p.id}')">
     <span class="pid">${p.project_ref||'—'}</span>
     <span class="trunc">${esc(p.name)}</span>
     <span style="color:var(--text2);font-size:12px" class="trunc">${esc(p.client||'—')}</span>
@@ -961,503 +676,425 @@ function rowHtml(p) {
   </div>`;
 }
 
-function getFiltered() {
-  return projects.filter(p => {
-    if (searchQuery && !p.name?.toLowerCase().includes(searchQuery) &&
-        !p.project_ref?.toLowerCase().includes(searchQuery) &&
-        !p.client?.toLowerCase().includes(searchQuery)) return false;
-    if (filterType === 'all') return true;
-    if (filterType === 'status') return p.status === filterVal;
-    if (filterType === 'resp') return p.resp_type === filterVal;
-    if (filterType === 'type') return p.type === filterVal;
+function getFiltered(){
+  return projects.filter(p=>{
+    if(searchQuery&&!p.name?.toLowerCase().includes(searchQuery)&&!p.project_ref?.toLowerCase().includes(searchQuery)&&!p.client?.toLowerCase().includes(searchQuery))return false;
+    if(filterType==='all')return true;
+    if(filterType==='status')return p.status===filterVal;
+    if(filterType==='resp')return p.resp_type===filterVal;
     return true;
   });
 }
 
-function renderAll() {
-  const filtered = getFiltered();
-  const pl = document.getElementById('projects-list');
-  const rl = document.getElementById('recent-list');
-  if (pl) pl.innerHTML = filtered.length ? filtered.map(rowHtml).join('') : `<div class="empty">${t('no_projects')}</div>`;
-  if (rl) rl.innerHTML = projects.slice(0,5).map(rowHtml).join('');
-  document.getElementById('badge-total').textContent = projects.length;
-  document.getElementById('stat-total').textContent = projects.length;
-  ['internal','am','client','vendor','blocked'].forEach(r => {
-    const c = projects.filter(p => p.resp_type === r).length;
-    document.getElementById('cnt-'+r).textContent = c;
-    if (document.getElementById('stat-'+r)) document.getElementById('stat-'+r).textContent = c;
+function renderAll(){
+  const filtered=getFiltered();
+  const pl=document.getElementById('projects-list');
+  const rl=document.getElementById('recent-list');
+  if(pl)pl.innerHTML=filtered.length?filtered.map(rowHtml).join(''):`<div class="empty">${t('no_projects')}</div>`;
+  if(rl)rl.innerHTML=projects.slice(0,5).map(rowHtml).join('');
+  document.getElementById('badge-total').textContent=projects.length;
+  document.getElementById('stat-total').textContent=projects.length;
+  ['internal','am','client','vendor','blocked'].forEach(r=>{
+    const c=projects.filter(p=>p.resp_type===r).length;
+    document.getElementById('cnt-'+r).textContent=c;
+    const s=document.getElementById('stat-'+r);if(s)s.textContent=c;
   });
 }
 
-function renderFilterChips() {
-  const chips = [
-    ['all','','filter_all'], ['status','open','filter_open'],
-    ['status','pending','filter_pending'], ['status','closed','filter_closed'],
-    ['resp','internal','filter_int'], ['resp','am','filter_am'],
-    ['resp','vendor','filter_vendor'], ['resp','blocked','filter_blocked'],
-  ];
-  const fc = document.getElementById('filter-chips');
-  if (!fc) return;
-  fc.innerHTML = chips.map(([type,val,key]) =>
-    `<button class="chip${filterType===type&&filterVal===val?' active':''}" onclick="setChip('${type}','${val}',this)">${t(key)}</button>`
-  ).join('');
+function renderFilterChips(){
+  const chips=[['all','','filter_all'],['status','open','filter_open'],['status','pending','filter_pending'],['status','closed','filter_closed'],['resp','internal','filter_int'],['resp','am','filter_am'],['resp','vendor','filter_vendor'],['resp','blocked','filter_blocked']];
+  const fc=document.getElementById('filter-chips');
+  if(!fc)return;
+  fc.innerHTML=chips.map(([type,val,key])=>`<button class="chip${filterType===type&&filterVal===val?' active':''}" onclick="setChip('${type}','${val}',this)">${t(key)}</button>`).join('');
 }
+function setChip(type,val,el){filterType=type;filterVal=val;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderAll();}
 
-function setChip(type, val, el) {
-  filterType = type; filterVal = val;
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  renderAll();
-}
-
-// ── DETAIL ───────────────────────────────────────────────────
-async function openDetail(id) {
-  currentProjectId = id;
-  const proj = projects.find(p => p.id === id);
-  if (!proj) return;
+// ── DETAIL ────────────────────────────────────────────────────
+async function openDetail(id){
+  currentProjectId=id;
+  const proj=projects.find(p=>p.id===id);
+  if(!proj)return;
   renderDetailView(proj);
   showView('detail');
-  showTab('timeline', document.querySelector('#det-tabs .tab'));
+  showTab('timeline',document.querySelector('#det-tabs .tab'));
   await loadTimeline(id);
   await loadHwChanges(id);
-  await loadMembers(id);
 }
 
-function renderDetailView(proj) {
-  if (!proj) return;
-  document.getElementById('det-id').textContent = proj.project_ref || '—';
-  document.getElementById('det-title').textContent = proj.name;
-  const b = document.getElementById('det-badge');
-  b.textContent = STATUS_LABELS()[proj.status] || proj.status;
-  b.className = 'badge ' + (STATUS_CLS[proj.status] || 'b-open');
+function renderDetailView(proj){
+  if(!proj)return;
+  document.getElementById('det-id').textContent=proj.project_ref||'—';
+  document.getElementById('det-title').textContent=proj.name;
+  const b=document.getElementById('det-badge');
+  b.textContent=SLABELS()[proj.status]||proj.status;
+  b.className='badge '+(SCLS[proj.status]||'b-open');
   renderBanner(proj);
-  const tl = TYPE_LABELS();
-  const info = [
-    { l: t('am_label'), v: proj.client || '—' },
-    { l: t('client_label'), v: proj.client || '—' },
-    { l: t('vendor_label'), v: proj.vendor || '—' },
-    { l: t('type_label'), v: tl[proj.type] || proj.type },
-    { l: t('deadline_label'), v: proj.deadline || '—' },
-    { l: t('created_on'), v: proj.created_at?.slice(0,10) || '—' },
-  ].map(x => `<div class="icard"><div class="ilbl">${x.l}</div><div class="ival">${esc(x.v)}</div></div>`).join('');
-  document.getElementById('det-info-grid').innerHTML = info;
-  document.getElementById('full-info-grid').innerHTML = info +
-    (proj.description ? `<div class="icard" style="grid-column:1/-1"><div class="ilbl">${t('desc_lbl')}</div><div class="ival" style="font-weight:400;white-space:pre-wrap">${esc(proj.description)}</div></div>` : '');
-  document.getElementById('edit-status-sel').value = proj.status;
+  const tl=TLABELS();
+  const info=[
+    {l:t('am_label'),v:proj.client||'—'},{l:t('client_label'),v:proj.client||'—'},
+    {l:t('vendor_label'),v:proj.vendor||'—'},{l:t('type_label'),v:tl[proj.type]||proj.type},
+    {l:t('deadline_label'),v:proj.deadline||'—'},{l:t('created_on'),v:proj.created_at?.slice(0,10)||'—'},
+  ].map(x=>`<div class="icard"><div class="ilbl">${x.l}</div><div class="ival">${esc(x.v)}</div></div>`).join('');
+  document.getElementById('det-info-grid').innerHTML=info;
+  document.getElementById('full-info-grid').innerHTML=info+(proj.description?`<div class="icard" style="grid-column:1/-1"><div class="ilbl">${t('desc_lbl')}</div><div class="ival" style="font-weight:400;white-space:pre-wrap">${esc(proj.description)}</div></div>`:'');
 }
 
-function renderBanner(proj) {
-  const cls = RCLS[proj.resp_type] || 'rp-internal';
-  const label = RLABELS()[proj.resp_type];
-  document.getElementById('resp-pill').innerHTML = `<span class="rp ${cls}">${RICONS[proj.resp_type]||''} ${label}</span>`;
-  const specific = proj.resp_name && proj.resp_name !== label ? proj.resp_name : '';
-  document.getElementById('resp-specific').textContent = specific ? '· ' + specific : '';
-  document.getElementById('resp-since').textContent = proj.resp_since ? t('since') + ' ' + new Date(proj.resp_since).toLocaleString() : '';
+function renderBanner(proj){
+  const cls=RCLS[proj.resp_type]||'rp-internal';
+  const label=RLABELS()[proj.resp_type];
+  document.getElementById('resp-pill').innerHTML=`<span class="rp ${cls}">${RICONS[proj.resp_type]||''} ${label}</span>`;
+  const specific=proj.resp_name&&proj.resp_name!==label?proj.resp_name:'';
+  document.getElementById('resp-specific').textContent=specific?'· '+specific:'';
+  document.getElementById('resp-since').textContent=proj.resp_since?t('since')+' '+new Date(proj.resp_since).toLocaleString():'';
 }
 
-async function loadTimeline(pid) {
-  const { data } = await sb.from('timeline_entries').select('*,profiles(full_name)').eq('project_id', pid).order('created_at', { ascending: true });
-  const list = document.getElementById('timeline-list');
-  if (!data || !data.length) { list.innerHTML = `<div class="empty">${t('no_entries')}</div>`; return; }
-  const icons = { email:'✉', file:'📎', note:'📝', hw:'🖥', resp:'⇄' };
-  const icCls = { email:'ic-email', file:'ic-file', note:'ic-note', hw:'ic-hw', resp:'ic-resp' };
-  list.innerHTML = [...data].reverse().map(e => `
-    <div class="tl-item">
+// ── TIMELINE ──────────────────────────────────────────────────
+async function loadTimeline(pid){
+  const{data}=await sb.from('timeline_entries').select('*,profiles(full_name)').eq('project_id',pid).order('created_at',{ascending:true});
+  const list=document.getElementById('timeline-list');
+  if(!data||!data.length){list.innerHTML=`<div class="empty">${t('no_entries')}</div>`;return;}
+  const icons={email:'✉',file:'📎',note:'📝',hw:'🖥',resp:'⇄'};
+  const icCls={email:'ic-email',file:'ic-file',note:'ic-note',hw:'ic-hw',resp:'ic-resp'};
+  list.innerHTML=[...data].reverse().map(e=>{
+    const isEmail=e.entry_type==='email';
+    const parsed=isEmail?parseEmailContent(e.content):null;
+    const previewText=parsed?`${t('from_lbl')}: ${parsed.from||'—'} · ${parsed.subject||'—'}`:'';
+    return`<div class="tl-item" id="tl-${e.id}">
       <div class="tl-ic ${icCls[e.entry_type]||'ic-note'}">${icons[e.entry_type]||'📝'}</div>
       <div class="tl-body">
-        <div class="tl-meta">${new Date(e.created_at).toLocaleString()} · ${e.label||''} ${e.profiles?.full_name ? '· ' + e.profiles.full_name : ''}</div>
-        <div class="${e.entry_type==='resp'?'tl-resp':'tl-txt'}">${esc(e.content)}</div>
+        <div class="tl-meta">${new Date(e.created_at).toLocaleString()}${e.label?' · '+e.label:''}${e.profiles?.full_name?' · '+e.profiles.full_name:''}</div>
+        ${isEmail
+          ?`<div class="tl-txt tl-email-entry${activeEmailEntryId===e.id?' active':''}" onclick="openEmailPanel(${JSON.stringify(e).replace(/"/g,'&quot;')},'tl-${e.id}')">
+              ${previewText?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px">${esc(previewText)}</div>`:''}
+              <div style="font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((parsed?.body||e.content).slice(0,120))}</div>
+              <div class="email-open-hint">👁 ${t('click_to_view')}</div>
+            </div>`
+          :`<div class="${e.entry_type==='resp'?'tl-resp':'tl-txt'}">${esc(e.content)}</div>`
+        }
       </div>
-    </div>`).join('');
-}
-
-async function loadHwChanges(pid) {
-  const { data } = await sb.from('hw_changes').select('*').eq('project_id', pid).order('created_at', { ascending: false });
-  const list = document.getElementById('hw-list');
-  if (!data || !data.length) { list.innerHTML = `<div class="empty">${t('no_hw')}</div>`; return; }
-  const pi = { none: t('pi_none'), up: '↑ ' + t('pi_up'), down: '↓ ' + t('pi_down') };
-  list.innerHTML = data.map(h => `<div class="hw-card">
-    <div style="font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px">🖥 ${esc(h.component)}</div>
-    <div style="display:flex;gap:14px;font-size:12px;color:var(--text2);flex-wrap:wrap">
-      ${h.version_old ? '<span>'+t('old_ver')+': '+esc(h.version_old)+'</span>' : ''}
-      ${h.version_new ? '<span>'+t('new_ver')+': '+esc(h.version_new)+'</span>' : ''}
-      <span>${pi[h.price_impact]||h.price_impact}</span>
-      <span style="margin-left:auto">${new Date(h.created_at).toLocaleString()}</span>
-    </div>
-    ${h.notes ? '<div style="font-size:12px;margin-top:6px">'+esc(h.notes)+'</div>' : ''}
-  </div>`).join('');
-}
-
-async function loadMembers(pid) {
-  const { data } = await sb.from('project_members').select('*,profiles(full_name,role)').eq('project_id', pid);
-  const list = document.getElementById('members-list');
-  if (!data || !data.length) { list.innerHTML = `<div class="empty">${t('no_members')}</div>`; return; }
-  list.innerHTML = data.map(m => {
-    const initials = (m.profiles?.full_name || '?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    return `<div class="mem-row">
-      <div class="avatar">${initials}</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(m.profiles?.full_name||'—')}</div><div style="font-size:11px;color:var(--text3)">${m.role}</div></div>
     </div>`;
   }).join('');
 }
 
-function showTab(tab, el) {
-  ['timeline','hw','members','info'].forEach(t2 => {
-    const e = document.getElementById('tab-'+t2);
-    if (e) e.style.display = t2 === tab ? 'block' : 'none';
-  });
-  document.querySelectorAll('#det-tabs .tab').forEach(t2 => t2.classList.remove('active'));
-  if (el) el.classList.add('active');
-  else { const idx = {timeline:0,hw:1,members:2,info:3}[tab]; document.querySelectorAll('#det-tabs .tab')[idx]?.classList.add('active'); }
+// Parse email content string back into fields
+function parseEmailContent(content){
+  const lines=content.split('\n');
+  const result={from:'',to:'',subject:'',date:'',body:''};
+  let bodyStart=0;
+  for(let i=0;i<lines.length;i++){
+    const l=lines[i];
+    if(l.startsWith('De: ')||l.startsWith('From: '))result.from=l.slice(l.indexOf(': ')+2);
+    else if(l.startsWith('Para: ')||l.startsWith('To: '))result.to=l.slice(l.indexOf(': ')+2);
+    else if(l.startsWith('Assunto: ')||l.startsWith('Subject: ')||l.startsWith('Asunto: '))result.subject=l.slice(l.indexOf(': ')+2);
+    else if(l.startsWith('Data: ')||l.startsWith('Date: ')||l.startsWith('Fecha: ')||l.startsWith('Data email: '))result.date=l.slice(l.indexOf(': ')+2);
+    else if(l.trim()===''&&i<8){bodyStart=i+1;break;}
+  }
+  result.body=lines.slice(bodyStart).join('\n').trim();
+  return result;
 }
 
-// ── NEW PROJECT ──────────────────────────────────────────────
-function openNewProject() {
-  emlData.new = null;
-  resetEmlZone('new');
-  ['f-name','f-am','f-client','f-vendor','f-desc','f-resp-name'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  document.getElementById('f-type').value = 'price';
-  document.getElementById('f-status').value = 'open';
-  document.getElementById('f-deadline').value = '';
-  resp1 = 'internal';
-  document.querySelectorAll('#new-rtg .rtb').forEach(b => b.className = 'rtb');
+// ── EMAIL SIDE PANEL ──────────────────────────────────────────
+function openEmailPanel(entry, tlId){
+  // entry may be a string (from onclick attr) — already parsed by JSON.parse via onclick
+  activeEmailEntryId=entry.id;
+  // highlight active
+  document.querySelectorAll('.tl-email-entry').forEach(el=>el.classList.remove('active'));
+  document.getElementById(tlId)?.querySelector('.tl-email-entry')?.classList.add('active');
+
+  const parsed=parseEmailContent(entry.content);
+  document.getElementById('ep-title').textContent=parsed.subject||entry.label||t('add_email');
+
+  const body=document.getElementById('ep-body');
+  body.innerHTML=`
+    <div class="ep-field">
+      <div class="ep-label">${t('from_lbl')}</div>
+      <div class="ep-value">${esc(parsed.from||'—')}</div>
+    </div>
+    <div class="ep-field">
+      <div class="ep-label">${t('to_lbl')}</div>
+      <div class="ep-value">${esc(parsed.to||'—')}</div>
+    </div>
+    <div class="ep-field">
+      <div class="ep-label">${t('subject_lbl')}</div>
+      <div class="ep-value" style="font-weight:600">${esc(parsed.subject||'—')}</div>
+    </div>
+    <div class="ep-field">
+      <div class="ep-label">${t('email_date')}</div>
+      <div class="ep-value">${esc(parsed.date||new Date(entry.created_at).toLocaleString())}</div>
+    </div>
+    ${entry.label?`<div class="ep-field"><span class="ep-tag">📎 ${esc(entry.label)}</span></div>`:''}
+    <div class="ep-divider"></div>
+    <div class="ep-label" style="margin-bottom:8px">${t('body_lbl')}</div>
+    <div class="ep-body-text">${esc(parsed.body||entry.content)}</div>
+  `;
+  document.getElementById('email-panel').classList.add('open');
+}
+
+function closeEmailPanel(){
+  document.getElementById('email-panel').classList.remove('open');
+  document.querySelectorAll('.tl-email-entry').forEach(el=>el.classList.remove('active'));
+  activeEmailEntryId=null;
+}
+
+// ── HW ────────────────────────────────────────────────────────
+async function loadHwChanges(pid){
+  const{data}=await sb.from('hw_changes').select('*').eq('project_id',pid).order('created_at',{ascending:false});
+  const list=document.getElementById('hw-list');
+  if(!data||!data.length){list.innerHTML=`<div class="empty">${t('no_hw')}</div>`;return;}
+  const pi={none:t('pi_none'),up:'↑ '+t('pi_up'),down:'↓ '+t('pi_down')};
+  list.innerHTML=data.map(h=>`<div class="hw-card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px">🖥 ${esc(h.component)}</div>
+    <div style="display:flex;gap:14px;font-size:12px;color:var(--text2);flex-wrap:wrap">
+      ${h.version_old?'<span>'+t('old_ver')+': '+esc(h.version_old)+'</span>':''}
+      ${h.version_new?'<span>'+t('new_ver')+': '+esc(h.version_new)+'</span>':''}
+      <span>${pi[h.price_impact]||h.price_impact}</span>
+      <span style="margin-left:auto">${new Date(h.created_at).toLocaleString()}</span>
+    </div>
+    ${h.notes?'<div style="font-size:12px;margin-top:6px">'+esc(h.notes)+'</div>':''}
+  </div>`).join('');
+}
+
+// ── EDIT PROJECT ──────────────────────────────────────────────
+function openEditProject(){
+  const proj=projects.find(p=>p.id===currentProjectId);
+  if(!proj)return;
+  document.getElementById('e-name').value=proj.name||'';
+  document.getElementById('e-type').value=proj.type||'other';
+  document.getElementById('e-am').value=proj.am||'';
+  document.getElementById('e-client').value=proj.client||'';
+  document.getElementById('e-vendor').value=proj.vendor||'';
+  document.getElementById('e-deadline').value=proj.deadline||'';
+  document.getElementById('e-desc').value=proj.description||'';
+  document.getElementById('e-status').value=proj.status||'open';
+  document.getElementById('ov-edit').classList.add('open');
+  applyLang();
+}
+
+async function saveEditProject(){
+  const name=document.getElementById('e-name').value.trim();
+  if(!name){alert(t('name_lbl')+'!');return;}
+  const updates={
+    name,
+    type:document.getElementById('e-type').value,
+    client:document.getElementById('e-client').value.trim()||null,
+    vendor:document.getElementById('e-vendor').value.trim()||null,
+    deadline:document.getElementById('e-deadline').value||null,
+    description:document.getElementById('e-desc').value.trim()||null,
+    status:document.getElementById('e-status').value,
+  };
+  const{error}=await sb.from('projects').update(updates).eq('id',currentProjectId);
+  if(error){alert(error.message);return;}
+  closeModal('ov-edit');
+  await loadProjects();
+  const proj=projects.find(p=>p.id===currentProjectId);
+  if(proj)renderDetailView(proj);
+}
+
+// ── NEW PROJECT ───────────────────────────────────────────────
+function openNewProject(){
+  emlData.new=null;resetEmlZone('new');
+  ['f-name','f-am','f-client','f-vendor','f-desc','f-resp-name'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-type').value='price';
+  document.getElementById('f-status').value='open';
+  document.getElementById('f-deadline').value='';
+  resp1='internal';
+  document.querySelectorAll('#new-rtg .rtb').forEach(b=>b.className='rtb');
   document.querySelector('#new-rtg .rtb').classList.add('sel-internal');
-  document.getElementById('new-id-box').textContent = 'PM-' + new Date().getFullYear() + '-' + String(projects.length + 1).padStart(4,'0');
+  document.getElementById('new-id-box').textContent='PM-'+new Date().getFullYear()+'-'+String(projects.length+1).padStart(4,'0');
   document.getElementById('ov-new').classList.add('open');
   applyLang();
 }
 
-async function saveProject() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { alert(t('name_lbl') + '!'); return; }
-  const respName = document.getElementById('f-resp-name').value.trim() || RLABELS()[resp1];
-  const now = new Date().toISOString();
-  const proj = {
-    name, type: document.getElementById('f-type').value,
-    status: document.getElementById('f-status').value,
-    client: document.getElementById('f-client').value.trim() || null,
-    vendor: document.getElementById('f-vendor').value.trim() || null,
-    deadline: document.getElementById('f-deadline').value || null,
-    description: document.getElementById('f-desc').value.trim() || null,
-    resp_type: resp1, resp_name: respName, resp_since: now,
-    created_by: currentUser.id,
-  };
-  const { data, error } = await sb.from('projects').insert(proj).select().single();
-  if (error) { alert(error.message); return; }
-  // Add area manager as member if set
-  const amVal = document.getElementById('f-am').value.trim();
-  // timeline: criação
-  await sb.from('timeline_entries').insert({
-    project_id: data.id, entry_type: 'resp',
-    label: t('created_proj'),
-    content: t('created_proj') + ' ' + data.project_ref + '. ' + t('pending_in') + ': ' + RLABELS()[resp1] + (respName !== RLABELS()[resp1] ? ' (' + respName + ')' : '') + '.',
-    created_by: currentUser.id
-  });
-  // Se há eml importado, adiciona também
-  if (emlData.new) {
-    const d = emlData.new;
-    await sb.from('timeline_entries').insert({
-      project_id: data.id, entry_type: 'email',
-      label: t('import_eml') + ' — ' + (d.subject || d.filename),
-      content: 'De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+d.body.slice(0,600),
-      created_by: currentUser.id
-    });
+async function saveProject(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){alert(t('name_lbl')+'!');return;}
+  const respName=document.getElementById('f-resp-name').value.trim()||RLABELS()[resp1];
+  const now=new Date().toISOString();
+  const proj={name,type:document.getElementById('f-type').value,status:document.getElementById('f-status').value,client:document.getElementById('f-client').value.trim()||null,vendor:document.getElementById('f-vendor').value.trim()||null,deadline:document.getElementById('f-deadline').value||null,description:document.getElementById('f-desc').value.trim()||null,resp_type:resp1,resp_name:respName,resp_since:now,created_by:currentUser.id};
+  const{data,error}=await sb.from('projects').insert(proj).select().single();
+  if(error){alert(error.message);return;}
+  await sb.from('timeline_entries').insert({project_id:data.id,entry_type:'resp',label:t('created_proj'),content:t('created_proj')+' '+data.project_ref+'. '+t('pending_in')+': '+RLABELS()[resp1]+(respName!==RLABELS()[resp1]?' ('+respName+')':'')+'.',created_by:currentUser.id});
+  if(emlData.new){
+    const d=emlData.new;
+    await sb.from('timeline_entries').insert({project_id:data.id,entry_type:'email',label:d.subject||d.filename,content:'De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+d.body.slice(0,600),created_by:currentUser.id});
   }
   closeModal('ov-new');
   await loadProjects();
   await openDetail(data.id);
 }
 
-// ── ENTRY ────────────────────────────────────────────────────
-function addEntry(type) {
-  currentEntryType = type; pendingEntryPid = currentProjectId;
-  const titles = { email: t('entry_email'), eml: t('entry_eml'), file: t('entry_file'), note: t('entry_note'), hw: t('entry_hw') };
-  document.getElementById('entry-title').textContent = titles[type];
-  const body = document.getElementById('entry-body');
-  if (type === 'email') {
-    body.innerHTML = `
-      <div class="fg"><label>${t('from_lbl')}</label><input type="text" id="e-from"/></div>
-      <div class="fg"><label>${t('subject_lbl')}</label><input type="text" id="e-subject"/></div>
-      <div class="fg"><label>${t('body_lbl')}</label><textarea id="e-body" rows="5"></textarea></div>`;
-  } else if (type === 'eml') {
-    emlData.entry = null;
-    body.innerHTML = `<div class="fg"><label>${t('import_email_lbl')}</label>
-      <div class="eml-zone" id="eml-entry-zone"
-        ondragover="dzDrag(event,'eml-entry-zone',true)"
-        ondragleave="dzDrag(event,'eml-entry-zone',false)"
-        ondrop="dzDrop(event,'entry')">
-        <input type="file" accept=".eml,.msg" onchange="dzSelect(event,'entry')" />
-        <div id="eml-entry-idle"><div style="font-size:22px;color:var(--green);margin-bottom:4px">📧</div>
-          <div style="font-size:13px;color:var(--text2)">${t('eml_drag')}</div></div>
-        <div id="eml-entry-loaded" class="eml-loaded" style="display:none">
-          <span style="font-size:18px">✅</span>
-          <div><div class="eml-fname" id="eml-entry-fname"></div></div>
-        </div>
+// ── ENTRY ─────────────────────────────────────────────────────
+function addEntry(type){
+  currentEntryType=type;pendingEntryPid=currentProjectId;
+  const titles={email:t('entry_email'),eml:t('entry_eml'),file:t('entry_file'),note:t('entry_note'),hw:t('entry_hw')};
+  document.getElementById('entry-title').textContent=titles[type];
+  const body=document.getElementById('entry-body');
+  if(type==='email'){
+    body.innerHTML=`<div class="fg"><label>${t('from_lbl')}</label><input type="text" id="e-from"/></div><div class="fg"><label>${t('subject_lbl')}</label><input type="text" id="e-subject"/></div><div class="fg"><label>${t('body_lbl')}</label><textarea id="e-body" rows="5"></textarea></div>`;
+  }else if(type==='eml'){
+    emlData.entry=null;
+    body.innerHTML=`<div class="fg"><label>${t('import_email_lbl')}</label>
+      <div class="eml-zone" id="eml-entry-zone" ondragover="dzDrag(event,'eml-entry-zone',true)" ondragleave="dzDrag(event,'eml-entry-zone',false)" ondrop="dzDrop(event,'entry')">
+        <input type="file" accept=".eml,.msg" onchange="dzSelect(event,'entry')"/>
+        <div id="eml-entry-idle"><div style="font-size:22px;color:var(--green);margin-bottom:4px">📧</div><div style="font-size:13px;color:var(--text2)">${t('eml_drag')}</div></div>
+        <div id="eml-entry-loaded" class="eml-loaded" style="display:none"><span style="font-size:18px">✅</span><div><div class="eml-fname" id="eml-entry-fname"></div></div></div>
       </div>
-      <div id="eml-entry-preview" style="display:none;margin-top:6px">
-        <div class="eml-preview" id="eml-entry-prev"></div>
-      </div></div>`;
-  } else if (type === 'file') {
-    body.innerHTML = `
-      <div class="fg"><label>${t('file_name_lbl')}</label><input type="text" id="e-fname"/></div>
-      <div class="fg"><label>${t('file_type_lbl')}</label><select id="e-ftype">
-        <option value="quote">${t('ftype_quote')}</option><option value="spec">${t('ftype_spec')}</option>
-        <option value="email">${t('ftype_email')}</option><option value="other">${t('ftype_other')}</option>
-      </select></div>
-      <div class="fg"><label>${t('file_notes_lbl')}</label><input type="text" id="e-fnote"/></div>`;
-  } else if (type === 'note') {
-    body.innerHTML = `<div class="fg"><label>${t('add_note')}</label><textarea id="e-note" rows="5"></textarea></div>`;
-  } else if (type === 'hw') {
-    body.innerHTML = `
-      <div class="fg"><label>${t('component_lbl')}</label><input type="text" id="hw-ref"/></div>
-      <div class="fr3">
-        <div class="fg"><label>${t('old_ver')}</label><input type="text" id="hw-old"/></div>
-        <div class="fg"><label>${t('new_ver')}</label><input type="text" id="hw-new"/></div>
-        <div class="fg"><label>${t('price_impact')}</label><select id="hw-impact">
-          <option value="none">${t('pi_none')}</option><option value="up">${t('pi_up')}</option><option value="down">${t('pi_down')}</option>
-        </select></div>
-      </div>
-      <div class="fg"><label>${t('justification_lbl')}</label><textarea id="hw-note" rows="3"></textarea></div>`;
+      <div id="eml-entry-preview" style="display:none;margin-top:6px"><div class="eml-preview" id="eml-entry-prev"></div></div></div>`;
+  }else if(type==='file'){
+    body.innerHTML=`<div class="fg"><label>${t('file_name_lbl')}</label><input type="text" id="e-fname"/></div><div class="fg"><label>${t('file_type_lbl')}</label><select id="e-ftype"><option value="quote">${t('ftype_quote')}</option><option value="spec">${t('ftype_spec')}</option><option value="email">${t('ftype_email')}</option><option value="other">${t('ftype_other')}</option></select></div><div class="fg"><label>${t('file_notes_lbl')}</label><input type="text" id="e-fnote"/></div>`;
+  }else if(type==='note'){
+    body.innerHTML=`<div class="fg"><label>${t('add_note')}</label><textarea id="e-note" rows="5"></textarea></div>`;
+  }else if(type==='hw'){
+    body.innerHTML=`<div class="fg"><label>${t('component_lbl')}</label><input type="text" id="hw-ref"/></div><div class="fr3"><div class="fg"><label>${t('old_ver')}</label><input type="text" id="hw-old"/></div><div class="fg"><label>${t('new_ver')}</label><input type="text" id="hw-new"/></div><div class="fg"><label>${t('price_impact')}</label><select id="hw-impact"><option value="none">${t('pi_none')}</option><option value="up">${t('pi_up')}</option><option value="down">${t('pi_down')}</option></select></div></div><div class="fg"><label>${t('justification_lbl')}</label><textarea id="hw-note" rows="3"></textarea></div>`;
   }
   document.getElementById('ov-entry').classList.add('open');
 }
 
-async function saveEntry() {
-  const pid = pendingEntryPid;
-  let label = '', content = '', entryType = currentEntryType;
-  if (currentEntryType === 'email') {
-    const from = document.getElementById('e-from').value;
-    const subj = document.getElementById('e-subject').value;
-    const body = document.getElementById('e-body').value;
-    if (!subj && !body) { alert(t('subject_lbl') + '!'); return; }
-    label = subj || t('add_email');
-    content = (from ? t('from_lbl') + ': ' + from + '\n' : '') + (subj ? t('subject_lbl') + ': ' + subj + '\n' : '') + '\n' + body;
-    entryType = 'email';
-  } else if (currentEntryType === 'eml') {
-    const d = emlData.entry;
-    if (!d) { alert(t('import_eml') + '!'); return; }
-    label = d.subject || d.filename;
-    content = 'De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+d.body.slice(0,600);
-    entryType = 'email';
-  } else if (currentEntryType === 'file') {
-    const fname = document.getElementById('e-fname').value.trim();
-    if (!fname) { alert(t('file_name_lbl') + '!'); return; }
-    const ftype = document.getElementById('e-ftype').value;
-    const fnote = document.getElementById('e-fnote').value;
-    label = { quote: t('ftype_quote'), spec: t('ftype_spec'), email: t('ftype_email'), other: t('ftype_other') }[ftype];
-    content = fname + (fnote ? ' — ' + fnote : '');
-    entryType = 'file';
-  } else if (currentEntryType === 'note') {
-    content = document.getElementById('e-note').value.trim();
-    if (!content) { alert(t('add_note') + '!'); return; }
-    label = t('add_note'); entryType = 'note';
-  } else if (currentEntryType === 'hw') {
-    const ref = document.getElementById('hw-ref').value.trim();
-    if (!ref) { alert(t('component_lbl') + '!'); return; }
-    const oldV = document.getElementById('hw-old').value;
-    const newV = document.getElementById('hw-new').value;
-    const impact = document.getElementById('hw-impact').value;
-    const note = document.getElementById('hw-note').value;
-    label = t('add_hw');
-    content = ref + (oldV || newV ? ' (' + oldV + ' → ' + newV + ')' : '') + (note ? '\n' + note : '');
-    entryType = 'hw';
-    await sb.from('hw_changes').insert({
-      project_id: pid, component: ref, version_old: oldV||null, version_new: newV||null,
-      price_impact: impact, notes: note||null, created_by: currentUser.id
-    });
+async function saveEntry(){
+  const pid=pendingEntryPid;
+  let label='',content='',entryType=currentEntryType;
+  if(currentEntryType==='email'){
+    const from=document.getElementById('e-from').value,subj=document.getElementById('e-subject').value,body=document.getElementById('e-body').value;
+    if(!subj&&!body){alert(t('subject_lbl')+'!');return;}
+    label=subj||t('add_email');
+    content=(from?t('from_lbl')+': '+from+'\n':'')+(subj?t('subject_lbl')+': '+subj+'\n':'')+'\n'+body;
+    entryType='email';
+  }else if(currentEntryType==='eml'){
+    const d=emlData.entry;if(!d){alert(t('import_eml')+'!');return;}
+    label=d.subject||d.filename;
+    content='De: '+(d.from||'—')+'\nPara: '+(d.to||'—')+'\nAssunto: '+(d.subject||'—')+'\nData: '+(d.date||'—')+'\n\n'+d.body.slice(0,600);
+    entryType='email';
+  }else if(currentEntryType==='file'){
+    const fname=document.getElementById('e-fname').value.trim();if(!fname){alert(t('file_name_lbl')+'!');return;}
+    const ftype=document.getElementById('e-ftype').value,fnote=document.getElementById('e-fnote').value;
+    label={quote:t('ftype_quote'),spec:t('ftype_spec'),email:t('ftype_email'),other:t('ftype_other')}[ftype];
+    content=fname+(fnote?' — '+fnote:'');entryType='file';
+  }else if(currentEntryType==='note'){
+    content=document.getElementById('e-note').value.trim();if(!content){alert(t('add_note')+'!');return;}
+    label=t('add_note');entryType='note';
+  }else if(currentEntryType==='hw'){
+    const ref=document.getElementById('hw-ref').value.trim();if(!ref){alert(t('component_lbl')+'!');return;}
+    const oldV=document.getElementById('hw-old').value,newV=document.getElementById('hw-new').value,impact=document.getElementById('hw-impact').value,note=document.getElementById('hw-note').value;
+    label=t('add_hw');
+    content=ref+(oldV||newV?' ('+oldV+' → '+newV+')':'')+(note?'\n'+note:'');
+    entryType='hw';
+    await sb.from('hw_changes').insert({project_id:pid,component:ref,version_old:oldV||null,version_new:newV||null,price_impact:impact,notes:note||null,created_by:currentUser.id});
   }
-  await sb.from('timeline_entries').insert({ project_id: pid, entry_type: entryType, label, content, created_by: currentUser.id });
+  await sb.from('timeline_entries').insert({project_id:pid,entry_type:entryType,label,content,created_by:currentUser.id});
   closeModal('ov-entry');
   await loadTimeline(pid);
-  if (currentEntryType === 'hw') await loadHwChanges(pid);
+  if(currentEntryType==='hw')await loadHwChanges(pid);
 }
 
-// ── RESPONSIBLE ──────────────────────────────────────────────
-function openRespModal() {
-  resp2 = 'internal';
-  document.querySelectorAll('#resp-rtg .rtb').forEach(b => b.className = 'rtb');
-  document.getElementById('resp2-name').value = '';
-  document.getElementById('resp2-reason').value = '';
+// ── RESPONSIBLE ───────────────────────────────────────────────
+function openRespModal(){
+  resp2='internal';
+  document.querySelectorAll('#resp-rtg .rtb').forEach(b=>b.className='rtb');
+  document.getElementById('resp2-name').value='';
+  document.getElementById('resp2-reason').value='';
   document.getElementById('ov-resp').classList.add('open');
   applyLang();
 }
 
-async function saveResp() {
-  const proj = projects.find(p => p.id === currentProjectId);
-  if (!proj) return;
-  const name = document.getElementById('resp2-name').value.trim() || RLABELS()[resp2];
-  const reason = document.getElementById('resp2-reason').value.trim();
-  const now = new Date().toISOString();
-  const oldLabel = RLABELS()[proj.resp_type] + (proj.resp_name && proj.resp_name !== RLABELS()[proj.resp_type] ? ' (' + proj.resp_name + ')' : '');
-  const newLabel = RLABELS()[resp2] + (name && name !== RLABELS()[resp2] ? ' (' + name + ')' : '');
-  await sb.from('projects').update({ resp_type: resp2, resp_name: name, resp_since: now }).eq('id', currentProjectId);
-  await sb.from('timeline_entries').insert({
-    project_id: currentProjectId, entry_type: 'resp',
-    label: t('transfer'),
-    content: t('prev_resp') + ': ' + oldLabel + '\n' + t('next_resp') + ': ' + newLabel + (reason ? '\n' + t('reason') + ': ' + reason : ''),
-    created_by: currentUser.id
-  });
+async function saveResp(){
+  const proj=projects.find(p=>p.id===currentProjectId);if(!proj)return;
+  const name=document.getElementById('resp2-name').value.trim()||RLABELS()[resp2];
+  const reason=document.getElementById('resp2-reason').value.trim();
+  const now=new Date().toISOString();
+  const oldLabel=RLABELS()[proj.resp_type]+(proj.resp_name&&proj.resp_name!==RLABELS()[proj.resp_type]?' ('+proj.resp_name+')':'');
+  const newLabel=RLABELS()[resp2]+(name&&name!==RLABELS()[resp2]?' ('+name+')':'');
+  await sb.from('projects').update({resp_type:resp2,resp_name:name,resp_since:now}).eq('id',currentProjectId);
+  await sb.from('timeline_entries').insert({project_id:currentProjectId,entry_type:'resp',label:t('transfer'),content:t('prev_resp')+': '+oldLabel+'\n'+t('next_resp')+': '+newLabel+(reason?'\n'+t('reason')+': '+reason:''),created_by:currentUser.id});
   closeModal('ov-resp');
   await loadProjects();
-  const updated = projects.find(p => p.id === currentProjectId);
-  if (updated) { renderBanner(updated); }
+  const updated=projects.find(p=>p.id===currentProjectId);
+  if(updated)renderBanner(updated);
   await loadTimeline(currentProjectId);
 }
 
-// ── STATUS ───────────────────────────────────────────────────
-function openEditStatus() {
-  const proj = projects.find(p => p.id === currentProjectId);
-  if (proj) document.getElementById('edit-status-sel').value = proj.status;
-  document.getElementById('ov-status').classList.add('open');
-  applyLang();
+// ── EML ───────────────────────────────────────────────────────
+function parseEml(text){
+  const lines=text.split(/\r?\n/);const headers={};let i=0;
+  while(i<lines.length){const l=lines[i];if(l.trim()===''){i++;break;}const m=l.match(/^([\w\-]+):\s*(.*)$/);if(m)headers[m[1].toLowerCase()]=m[2].trim();i++;}
+  let body=lines.slice(i).join('\n');
+  body=body.replace(/=\r?\n/g,'').replace(/=[0-9A-Fa-f]{2}/g,m=>String.fromCharCode(parseInt(m.slice(1),16)));
+  if((headers['content-type']||'').includes('text/html'))body=body.replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s{2,}/g,' ');
+  body=body.trim().slice(0,800);
+  let dateStr='';try{const d=new Date(headers['date']||'');if(!isNaN(d))dateStr=d.toISOString().slice(0,10);}catch(e){}
+  let subject=headers['subject']||'';
+  subject=subject.replace(/=\?[^?]+\?[bBqQ]\?([^?]*)\?=/g,(_,e)=>{try{return atob(e);}catch{return e;}});
+  const from=(headers['from']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim();
+  const to=(headers['to']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim();
+  return{subject,from,to,date:dateStr,body};
 }
 
-async function saveStatus() {
-  const status = document.getElementById('edit-status-sel').value;
-  await sb.from('projects').update({ status }).eq('id', currentProjectId);
-  closeModal('ov-status');
-  await loadProjects();
-  const proj = projects.find(p => p.id === currentProjectId);
-  if (proj) renderDetailView(proj);
-}
+function dzDrag(e,id,over){e.preventDefault();document.getElementById(id)?.classList.toggle('over',over);}
+function dzDrop(e,which){e.preventDefault();const f=e.dataTransfer.files[0];if(f)readEml(f,which);}
+function dzSelect(e,which){const f=e.target.files[0];if(f)readEml(f,which);}
 
-// ── MEMBERS ──────────────────────────────────────────────────
-function openAddMember() {
-  document.getElementById('member-email').value = '';
-  document.getElementById('member-role').value = 'area_manager';
-  document.getElementById('member-msg').style.display = 'none';
-  document.getElementById('ov-member').classList.add('open');
-  applyLang();
-}
-
-async function saveMember() {
-  const email = document.getElementById('member-email').value.trim().toLowerCase();
-  const role = document.getElementById('member-role').value;
-  const msg = document.getElementById('member-msg');
-  const profile = allProfiles.find(p => p.id !== currentUser.id);
-  // lookup by joining auth — simpler: find from loaded profiles by email match via a query
-  const { data: found } = await sb.from('profiles').select('id,full_name').ilike('full_name', email.split('@')[0]+'%');
-  // Better: query auth email via profiles join. For simplicity match on partial name or ask admin.
-  // In production, expose a lookup RPC. For now we match on profiles:
-  const { data: users } = await sb.rpc ? [] : [];
-  // Fallback: insert by email lookup from auth.users (requires service role — skip for anon key)
-  // Instead: let user paste the UUID directly (clear UX note)
-  msg.textContent = t('member_not_found') + ' Use o UUID do utilizador.';
-  msg.style.display = '';
-  // Note: full email lookup requires a Supabase Edge Function with service role key.
-  // For now close and note this limitation.
-}
-
-// ── EML ──────────────────────────────────────────────────────
-function parseEml(text) {
-  const lines = text.split(/\r?\n/);
-  const headers = {}; let i = 0;
-  while (i < lines.length) {
-    const l = lines[i];
-    if (l.trim() === '') { i++; break; }
-    const m = l.match(/^([\w\-]+):\s*(.*)$/);
-    if (m) headers[m[1].toLowerCase()] = m[2].trim();
-    i++;
-  }
-  let body = lines.slice(i).join('\n');
-  body = body.replace(/=\r?\n/g,'').replace(/=[0-9A-Fa-f]{2}/g, m => String.fromCharCode(parseInt(m.slice(1),16)));
-  if ((headers['content-type']||'').includes('text/html')) body = body.replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s{2,}/g,' ');
-  body = body.trim().slice(0,800);
-  let dateStr = '';
-  try { const d = new Date(headers['date']||''); if (!isNaN(d)) dateStr = d.toISOString().slice(0,10); } catch(e) {}
-  let subject = headers['subject'] || '';
-  subject = subject.replace(/=\?[^?]+\?[bBqQ]\?([^?]*)\?=/g, (_,e) => { try { return atob(e); } catch { return e; } });
-  const from = (headers['from']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim();
-  const to = (headers['to']||'').replace(/"([^"]+)"\s*<[^>]+>/,'$1').replace(/<([^>]+)>/,'$1').trim();
-  return { subject, from, to, date: dateStr, body };
-}
-
-function dzDrag(e, id, over) { e.preventDefault(); document.getElementById(id)?.classList.toggle('over', over); }
-function dzDrop(e, which) { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) readEml(f, which); }
-function dzSelect(e, which) { const f = e.target.files[0]; if (f) readEml(f, which); }
-
-function readEml(file, which) {
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const parsed = { ...parseEml(ev.target.result), filename: file.name };
-    emlData[which] = parsed;
-    if (which === 'new') {
-      document.getElementById('eml-new-idle').style.display = 'none';
-      document.getElementById('eml-new-loaded').style.display = 'flex';
-      document.getElementById('eml-new-fname').textContent = file.name;
-      document.getElementById('eml-new-info').textContent = t('from_lbl') + ': ' + (parsed.from||'—') + ' · ' + (parsed.date||'');
-      document.getElementById('eml-new-preview').style.display = 'block';
-      document.getElementById('eml-new-prev-txt').textContent = 'De: '+(parsed.from||'—')+'\nPara: '+(parsed.to||'—')+'\nAssunto: '+(parsed.subject||'—')+'\nData: '+(parsed.date||'—')+'\n\n'+parsed.body.slice(0,300);
-      // auto-fill form
-      if (parsed.subject) document.getElementById('f-name').value = parsed.subject.replace(/^(re:|fw:|fwd:)\s*/i,'').trim();
-      if (parsed.to) document.getElementById('f-am').value = parsed.to;
-      const lc = (parsed.subject + parsed.body).toLowerCase();
-      if (lc.includes('cotaç') || lc.includes('preço') || lc.includes('price') || lc.includes('precio')) document.getElementById('f-type').value = 'price';
-      else if (lc.includes('lead time') || lc.includes('prazo de entrega') || lc.includes('plazo')) document.getElementById('f-type').value = 'leadtime';
-      else if (lc.includes('alteraç') || lc.includes('hw change') || lc.includes('cambio')) document.getElementById('f-type').value = 'hw';
-      if (parsed.date) document.getElementById('f-deadline').value = parsed.date;
-      document.getElementById('f-desc').value = parsed.body.slice(0,300);
-    } else {
-      document.getElementById('eml-entry-idle').style.display = 'none';
-      document.getElementById('eml-entry-loaded').style.display = 'flex';
-      document.getElementById('eml-entry-fname').textContent = file.name;
-      document.getElementById('eml-entry-preview').style.display = 'block';
-      document.getElementById('eml-entry-prev').textContent = 'De: '+(parsed.from||'—')+'\nAssunto: '+(parsed.subject||'—')+'\n\n'+parsed.body.slice(0,300);
+function readEml(file,which){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const parsed={...parseEml(ev.target.result),filename:file.name};
+    emlData[which]=parsed;
+    if(which==='new'){
+      document.getElementById('eml-new-idle').style.display='none';
+      document.getElementById('eml-new-loaded').style.display='flex';
+      document.getElementById('eml-new-fname').textContent=file.name;
+      document.getElementById('eml-new-info').textContent=t('from_lbl')+': '+(parsed.from||'—')+' · '+(parsed.date||'');
+      document.getElementById('eml-new-preview').style.display='block';
+      document.getElementById('eml-new-prev-txt').textContent='De: '+(parsed.from||'—')+'\nPara: '+(parsed.to||'—')+'\nAssunto: '+(parsed.subject||'—')+'\nData: '+(parsed.date||'—')+'\n\n'+parsed.body.slice(0,300);
+      if(parsed.subject)document.getElementById('f-name').value=parsed.subject.replace(/^(re:|fw:|fwd:)\s*/i,'').trim();
+      if(parsed.to)document.getElementById('f-am').value=parsed.to;
+      const lc=(parsed.subject+parsed.body).toLowerCase();
+      if(lc.includes('cotaç')||lc.includes('preço')||lc.includes('price')||lc.includes('precio'))document.getElementById('f-type').value='price';
+      else if(lc.includes('lead time')||lc.includes('prazo de entrega')||lc.includes('plazo'))document.getElementById('f-type').value='leadtime';
+      else if(lc.includes('alteraç')||lc.includes('hw change')||lc.includes('cambio'))document.getElementById('f-type').value='hw';
+      if(parsed.date)document.getElementById('f-deadline').value=parsed.date;
+      document.getElementById('f-desc').value=parsed.body.slice(0,300);
+    }else{
+      document.getElementById('eml-entry-idle').style.display='none';
+      document.getElementById('eml-entry-loaded').style.display='flex';
+      document.getElementById('eml-entry-fname').textContent=file.name;
+      document.getElementById('eml-entry-preview').style.display='block';
+      document.getElementById('eml-entry-prev').textContent='De: '+(parsed.from||'—')+'\nAssunto: '+(parsed.subject||'—')+'\n\n'+parsed.body.slice(0,300);
     }
   };
-  reader.readAsText(file, 'utf-8');
+  reader.readAsText(file,'utf-8');
 }
 
-function resetEmlZone(which) {
-  const idle = document.getElementById('eml-'+which+'-idle');
-  const loaded = document.getElementById('eml-'+which+'-loaded');
-  const prev = document.getElementById('eml-'+which+'-preview');
-  const inp = document.getElementById('eml-'+which+'-input');
-  if (idle) idle.style.display = '';
-  if (loaded) loaded.style.display = 'none';
-  if (prev) prev.style.display = 'none';
-  if (inp) inp.value = '';
+function resetEmlZone(which){
+  const idle=document.getElementById('eml-'+which+'-idle');
+  const loaded=document.getElementById('eml-'+which+'-loaded');
+  const prev=document.getElementById('eml-'+which+'-preview');
+  const inp=document.getElementById('eml-'+which+'-input');
+  if(idle)idle.style.display='';if(loaded)loaded.style.display='none';if(prev)prev.style.display='none';if(inp)inp.value='';
+}
+function clearEml(which,e){if(e)e.stopPropagation();emlData[which]=null;resetEmlZone(which);}
+
+// ── RESP BTNS ─────────────────────────────────────────────────
+function selResp1(btn,type){resp1=type;document.querySelectorAll('#new-rtg .rtb').forEach(b=>b.className='rtb');btn.classList.add('sel-'+type);}
+function selResp2(btn,type){resp2=type;document.querySelectorAll('#resp-rtg .rtb').forEach(b=>b.className='rtb');btn.classList.add('sel-'+type);}
+
+// ── MODAL ─────────────────────────────────────────────────────
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+
+// ── COPY ID ───────────────────────────────────────────────────
+function copyId(){const id=document.getElementById('det-id').textContent;navigator.clipboard?.writeText('['+id+']').then(()=>alert(t('copied')+'['+id+']'));}
+
+// ── TABS ──────────────────────────────────────────────────────
+function showTab(tab,el){
+  ['timeline','hw','info'].forEach(t2=>{const e=document.getElementById('tab-'+t2);if(e)e.style.display=t2===tab?'block':'none';});
+  document.querySelectorAll('#det-tabs .tab').forEach(t2=>t2.classList.remove('active'));
+  if(el)el.classList.add('active');
+  else{const idx={timeline:0,hw:1,info:2}[tab];document.querySelectorAll('#det-tabs .tab')[idx]?.classList.add('active');}
+  if(tab!=='timeline')closeEmailPanel();
 }
 
-function clearEml(which, e) {
-  if (e) e.stopPropagation();
-  emlData[which] = null;
-  resetEmlZone(which);
-}
+// ── HELPERS ───────────────────────────────────────────────────
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.ov.open').forEach(o=>o.classList.remove('open'));closeEmailPanel();}});
 
-// ── RESP BUTTONS ─────────────────────────────────────────────
-function selResp1(btn, type) {
-  resp1 = type;
-  document.querySelectorAll('#new-rtg .rtb').forEach(b => b.className = 'rtb');
-  btn.classList.add('sel-' + type);
-}
-function selResp2(btn, type) {
-  resp2 = type;
-  document.querySelectorAll('#resp-rtg .rtb').forEach(b => b.className = 'rtb');
-  btn.classList.add('sel-' + type);
-}
-
-// ── MODAL ────────────────────────────────────────────────────
-function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
-
-// ── COPY ID ──────────────────────────────────────────────────
-function copyId() {
-  const id = document.getElementById('det-id').textContent;
-  navigator.clipboard?.writeText('[' + id + ']').then(() => alert(t('copied') + '[' + id + ']'));
-}
-
-// ── HELPERS ──────────────────────────────────────────────────
-function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── KEYBOARD ────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.ov.open').forEach(o => o.classList.remove('open'));
-});
-
-// ── START ────────────────────────────────────────────────────
 init();
 </script>
 </body>
